@@ -9,9 +9,13 @@ import ai.dragonfly.mesh.*
 object Drum {
 
   def apply(
-    radialSegments: Int = 18, sideSegments: Int = 1, baseSegments:Int = 1, capSegments: Int = 1,
-    baseRadius: Double = 1.0, capRadius: Double = 1.0, height: Double = 1.0, name:String = "Drum"
+    radialSegments: Int = 12, sideSegments: Int = 1, baseSegments:Int = 1, capSegments: Int = 1,
+    baseRadius: Double = 2.0, capRadius: Double = 1.0, height: Double = 1.0, name:String = "Drum"
   ): Mesh = {
+
+    if (radialSegments < 3) throw new IllegalArgumentException("Drum doesn't support radial segment values less than 3.")
+    if (sideSegments < 1 || baseSegments < 1 || capSegments < 1) throw new IllegalArgumentException("Drum doesn't support 0 segment values.")
+    if (height < 0.0 || baseRadius < 0.0 || capRadius < 0.0) throw new IllegalArgumentException("Drum doesn't support negative dimension values.")
 
     val Δθ: Double = (2 * π) / radialSegments
     val cuts: Int = 2 + baseSegments + sideSegments + capSegments - 3
@@ -74,9 +78,6 @@ object Drum {
 
     //    println(pcount)
 
-    println(s"|old triangle| = ${(2 * (cuts + 1)) * radialSegments}")
-    println(s"|new triangle 1| = ${2 * radialSegments * ( sideSegments + baseSegments + capSegments) - 4}")
-    println(s"|new triangle 2| = ${2 * radialSegments * ( sideSegments + baseSegments + capSegments)}")
     val triangles: NArray[Triangle] = new NArray[Triangle](
       //(2 * (cuts + 1)) * radialSegments
       //2 * radialSegments * ( sideSegments + baseSegments + capSegments) - 4
