@@ -9,7 +9,11 @@ object Demo extends XApp(DivConsole(style = "padding: 8px; overflow: scroll;")) 
 
   val allDemos: Array[Demonstration] = Array[Demonstration](
     Cube,
-    Cylinder
+    Cylinder,
+    Drum,
+    Screw,
+    Bolt,
+    Plane
   )
   def main(args: Array[String]): Unit = {
     for (d <- allDemos) d.demonstrate

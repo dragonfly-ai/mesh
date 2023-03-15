@@ -44,10 +44,15 @@ object Plane {
     p = 0
 
     var t:Int = 0; while (t < triangleCount) {
-      triangles(t) = Triangle(p, p + 1, p + width)
-      t += 1
-      triangles(t) = Triangle(p+1, p + 1 + width, p + width)
-      t += 1
+
+      t = addQuad(
+        p,
+        p + 1 + width,
+        p + width,
+        p + 1,
+        triangles,
+        t
+      )
 
       x = x + 1
       if (x >= horizontalSegments) {

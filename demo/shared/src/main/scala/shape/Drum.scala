@@ -8,5 +8,5 @@ object Drum extends Demonstration {
     println(ai.dragonfly.mesh.io.PLY.fromMesh(ai.dragonfly.mesh.shape.Drum()))
   }
 
-  override def name: String = "Cylinder"
+  override def name: String = "Drum"
 }

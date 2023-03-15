@@ -9,18 +9,18 @@ import ai.dragonfly.mesh.*
 object Drum {
 
   def apply(
-    radialSegments: Int = 12, sideSegments: Int = 1, baseSegments:Int = 1, capSegments: Int = 1,
+    angularSegments: Int = 12, sideSegments: Int = 1, baseSegments:Int = 1, capSegments: Int = 1,
     baseRadius: Double = 2.0, capRadius: Double = 1.0, height: Double = 1.0, name:String = "Drum"
   ): Mesh = {
 
-    if (radialSegments < 3) throw new IllegalArgumentException("Drum doesn't support radial segment values less than 3.")
+    if (angularSegments < 3) throw new IllegalArgumentException("Drum doesn't support radial segment values less than 3.")
     if (sideSegments < 1 || baseSegments < 1 || capSegments < 1) throw new IllegalArgumentException("Drum doesn't support 0 segment values.")
     if (height < 0.0 || baseRadius < 0.0 || capRadius < 0.0) throw new IllegalArgumentException("Drum doesn't support negative dimension values.")
 
-    val Δθ: Double = (2 * π) / radialSegments
+    val Δθ: Double = (2 * π) / angularSegments
     val cuts: Int = 2 + baseSegments + sideSegments + capSegments - 3
 
-    val points: NArray[Vector3] = new NArray[Vector3](2 + (cuts * radialSegments))
+    val points: NArray[Vector3] = new NArray[Vector3](2 + (cuts * angularSegments))
     //  println(points.length)
 
     val pEnd: Int = points.length - 1
@@ -37,7 +37,7 @@ object Drum {
       cut += 1
 
       p = 1
-      while (p <= radialSegments) {
+      while (p <= angularSegments) {
 
         var r:Double = baseRadius
         var h:Double = 0
@@ -65,7 +65,7 @@ object Drum {
         val x: Double = r * Math.cos(dT)
         val y: Double = r * Math.sin(dT)
 
-        val cutOffset: Int = (cut - 1) * radialSegments
+        val cutOffset: Int = (cut - 1) * angularSegments
         points(cutOffset + p) = Vector3(x, y, h)
 
         dT = p * Δθ
@@ -79,17 +79,15 @@ object Drum {
     //    println(pcount)
 
     val triangles: NArray[Triangle] = new NArray[Triangle](
-      //(2 * (cuts + 1)) * radialSegments
-      //2 * radialSegments * ( sideSegments + baseSegments + capSegments) - 4
-      2 * radialSegments * ( sideSegments + baseSegments + capSegments)
+      2 * angularSegments * ( sideSegments + baseSegments + capSegments)
     )
 
     p = 1
     var t = 0
 
-    val coEnd: Int = pEnd - radialSegments - 1 // cuts * radialSegments
-    while (p <= radialSegments) {
-      val ps: Int = p % radialSegments
+    val coEnd: Int = pEnd - angularSegments - 1 // cuts * radialSegments
+    while (p <= angularSegments) {
+      val ps: Int = p % angularSegments
       triangles(t) = Triangle(0, ps + 1, p) // bottom
       triangles(t + 1) = Triangle(pEnd, coEnd + p, coEnd + ps + 1) // top
       t += 2
@@ -98,21 +96,28 @@ object Drum {
 
     cut = 0; while (cut < cuts) {
 
-      val cutOffset: Int = cut * radialSegments
+      val cutOffset: Int = cut * angularSegments
 
       p = 1
 
-      while (p <= radialSegments && t < triangles.length) {
-        val ps: Int = p % radialSegments
-        val off2 = cutOffset + radialSegments
-        triangles(t) = Triangle(cutOffset + p, cutOffset + ps + 1, off2 + ps + 1) // side
-        triangles(t + 1) = Triangle(off2 + p, cutOffset + p, off2 + ps + 1) // side
-        t += 2
+      while (p <= angularSegments && t < triangles.length) {
+        val ps: Int = p % angularSegments
+        val off2 = cutOffset + angularSegments
+
+        t = addQuad(
+          off2 + p,
+          cutOffset + ps + 1,
+          off2 + ps + 1,
+          cutOffset + p,
+          triangles,
+          t
+        )
+
         p += 1
       }
       cut += 1
     }
-
+    
     Mesh(points, triangles, name)
   }
 }

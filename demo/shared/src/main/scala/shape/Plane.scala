@@ -19,5 +19,5 @@ object Plane extends Demonstration {
     )
   }
 
-  override def name: String = "Cylinder"
+  override def name: String = "Plane"
 }

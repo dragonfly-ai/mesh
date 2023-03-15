@@ -72,19 +72,13 @@ object Cube {
 
     var t: Int = 0
 
-    inline def addQuad(a: Int, b: Int, c: Int, d: Int): Unit = if (t < triangles.length) {
-      triangles(t) = Triangle(a, b, c)
-      triangles(t + 1) = Triangle(a, d, b)
-      t += 2
-    }
-
     // [front)[right)[back)[left)
     val sidePointCount = cubeInPlace(n) - cubeInPlace(n - 2) - (2 * squareInPlace(n - 2))
 
     for (p <- 1 until sidePointCount - stride + 1) {
 
-      if (p % stride == 0) addQuad(p, p - 1, p - stride, p - 1 + stride)
-      else addQuad(p + stride, p - 1, p, p + stride - 1)
+      t = if (p % stride == 0) addQuad(p, p - 1, p - stride, p - 1 + stride, triangles, t)
+      else addQuad(p + stride, p - 1, p, p + stride - 1, triangles, t)
 
     }
 
@@ -98,11 +92,11 @@ object Cube {
 
       if (p % capStride != 0) {
         // (bottom)
-        addQuad(pi - capStride, pi - 1, pi, pi - capStride - 1)
+        t = addQuad(pi - capStride, pi - 1, pi, pi - capStride - 1, triangles, t)
 
         // (top)
         val pj: Int = sidePointCount + p + capPointCount
-        addQuad(pj - 1, pj - capStride, pj, pj - capStride - 1)
+        t = addQuad(pj - 1, pj - capStride, pj, pj - capStride - 1, triangles, t)
       }
     }
 
@@ -111,82 +105,82 @@ object Cube {
     if (n > 2) {
       // Bottom Corners:
       // Left Front Bottom
-      addQuad(stride - 1, 1, 0, sidePointCount)
+      t = addQuad(stride - 1, 1, 0, sidePointCount, triangles, t)
 
       // Front Bottom Right
-      addQuad(panelStride, sidePointCount + capStride - 1, panelStride + 1, panelStride - 1)
+      t = addQuad(panelStride, sidePointCount + capStride - 1, panelStride + 1, panelStride - 1, triangles, t)
 
       // Bottom Right Back
       var temp: Int = 2 * panelStride
-      addQuad(temp + 1, temp - 1, sidePointCount + capPointCount - 1, temp)
+      t = addQuad(temp + 1, temp - 1, sidePointCount + capPointCount - 1, temp, triangles, t)
 
       // Bottom Back Left
       temp = 3 * panelStride
-      addQuad(sidePointCount + capPointCount - capStride, temp, temp - 1, temp + 1)
+      t = addQuad(sidePointCount + capPointCount - capStride, temp, temp - 1, temp + 1, triangles, t)
 
       // Top Corners:
       val topOffset: Int = sidePointCount + capPointCount
 
       // Left Front Top
       temp = sidePointCount - stride
-      addQuad(temp + 1, sidePointCount - 1, temp, topOffset)
+      t = addQuad(temp + 1, sidePointCount - 1, temp, topOffset, triangles, t)
 
       // Front Top Right
       temp = sidePointCount - stride + panelStride
-      addQuad(temp, topOffset + capStride - 1, temp - 1, temp + 1)
+      t = addQuad(temp, topOffset + capStride - 1, temp - 1, temp + 1, triangles, t)
 
       // Top Right Back
       temp = sidePointCount - 2 * panelStride
-      addQuad(temp - 1, temp + 1, points.length - 1, temp)
+      t = addQuad(temp - 1, temp + 1, points.length - 1, temp, triangles, t)
 
       // Top Back Left
       temp = sidePointCount - panelStride
-      addQuad(temp, points.length - capStride, temp - 1, temp + 1)
+      t = addQuad(temp, points.length - capStride, temp - 1, temp + 1, triangles, t)
 
       // connect sides to caps
       for (i <- 0 until capStride - 1) {
         // Bottom Front
         temp = sidePointCount + i
-        addQuad(temp, i + 2, i + 1, temp + 1)
+        t = addQuad(temp, i + 2, i + 1, temp + 1, triangles, t)
 
         // Bottom Right
         val ibr: Int = sidePointCount + capStride - 1 + (capStride * i)
         temp = panelStride + i + 1
-        addQuad(ibr + capStride, temp, ibr, temp + 1)
+        t = addQuad(ibr + capStride, temp, ibr, temp + 1, triangles, t)
 
         // Bottom Back
         val ibb: Int = 3 * panelStride - i - 1
         temp = sidePointCount + capPointCount - capStride + i
-        addQuad(ibb, temp + 1, temp, ibb - 1)
+        t = addQuad(ibb, temp + 1, temp, ibb - 1, triangles, t)
 
         // Bottom Left
         val ibl: Int = stride - i - 1
         temp = sidePointCount + (i * capStride)
-        addQuad(ibl - 1, temp, ibl, temp + capStride)
+        t = addQuad(ibl - 1, temp, ibl, temp + capStride, triangles, t)
 
         // Top Front
         val itf: Int = sidePointCount - stride + 1 + i
         temp = topOffset + i
-        addQuad(temp, itf + 1, temp + 1, itf)
+        t = addQuad(temp, itf + 1, temp + 1, itf, triangles, t)
 
         // Top Right
         val itr: Int = sidePointCount - stride + panelStride + i + 1
         temp = topOffset + (i + 1) * capStride
-        addQuad(itr, temp + capStride - 1, temp - 1, itr + 1)
+        t = addQuad(itr, temp + capStride - 1, temp - 1, itr + 1, triangles, t)
 
         // Top Back
         val itb: Int = sidePointCount - panelStride - 1 - i
         temp = points.length - capStride + i
-        addQuad(itb, temp + 1, itb - 1, temp)
+        t = addQuad(itb, temp + 1, itb - 1, temp, triangles, t)
 
         // Top Left
         val itl: Int = sidePointCount - i - 1
         temp = topOffset + i * capStride
-        addQuad(temp, itl - 1, itl, temp + capStride)
+        t = addQuad(temp, itl - 1, itl, temp + capStride, triangles, t)
       }
     } else {
-      addQuad(0, 2, 1, 3)
-      addQuad(7, 5, 6, 4)
+      t = addQuad(0, 2, 1, 3, triangles, t)
+      t = addQuad(7, 5, 6, 4, triangles, t)
     }
 
     Mesh(points, triangles, name)
