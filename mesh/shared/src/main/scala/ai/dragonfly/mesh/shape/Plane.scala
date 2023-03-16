@@ -3,8 +3,11 @@ package ai.dragonfly.mesh.shape
 import narr.*
 import ai.dragonfly.math.vector.*
 import ai.dragonfly.mesh.*
+
+import scala.scalajs.js.annotation.JSExportTopLevel
 object Plane {
 
+  @JSExportTopLevel("Plane")
   def apply(c0: Vector3, c1: Vector3, c2: Vector3, verticalSegments:Int = 1, horizontalSegments:Int = 1): Mesh = {
 
     val vX:Vector3 = c1 - c0

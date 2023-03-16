@@ -2,11 +2,15 @@ package ai.dragonfly.mesh.io
 
 import ai.dragonfly.mesh.sRGB
 
+import scala.scalajs.js.annotation.{JSExportAll, JSExportTopLevel}
+
+@JSExportTopLevel("MTL") @JSExportAll
 object MTL {
   val gray:sRGB = sRGB(128, 128, 128)
   val default:MTL = MTL("metal", gray)
 }
 
+@JSExportAll
 case class MTL(name: String, diffuse: sRGB, ambient: sRGB = gray, specular: Specular = Specular(), dissolve: Float = 1f) {
   def mtl: String = {
     val sb: StringBuilder = new StringBuilder()

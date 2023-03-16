@@ -5,7 +5,10 @@ import ai.dragonfly.math.vector.Vector3
 import ai.dragonfly.mesh.{Mesh, Triangle}
 import narr.*
 
+import scala.scalajs.js.annotation.JSExportTopLevel
+
 object Bolt {
+  @JSExportTopLevel("Bolt")
   def apply(
     length: Double = 10.0, threadsPerUnit: Double = 3.0, threadThickness: Double = 0.1, shankLength: Double = 3.5,
     angularSegments: Int = 36, threadRadius: Double = 1.0, coreRadius: Double = 0.85, name: String = "Bolt"

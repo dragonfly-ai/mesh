@@ -6,8 +6,11 @@ import ai.dragonfly.math.Constant.π
 import ai.dragonfly.math.{cubeInPlace, squareInPlace}
 import ai.dragonfly.mesh.*
 
+import scala.scalajs.js.annotation.JSExportTopLevel
+
 object Drum {
 
+  @JSExportTopLevel("Drum")
   def apply(
     angularSegments: Int = 12, sideSegments: Int = 1, baseSegments:Int = 1, capSegments: Int = 1,
     baseRadius: Double = 2.0, capRadius: Double = 1.0, height: Double = 1.0, name:String = "Drum"

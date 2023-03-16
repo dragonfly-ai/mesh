@@ -16,7 +16,9 @@ lazy val mesh = crossProject(JSPlatform, JVMPlatform, NativePlatform)
     ),
   )
   .jsSettings()
-  .jvmSettings()
+  .jvmSettings().nativeSettings(
+    libraryDependencies += "org.scala-js" %% "scalajs-stubs" % "1.1.0"
+  )
 
 
 lazy val demo = crossProject(JSPlatform, JVMPlatform, NativePlatform)

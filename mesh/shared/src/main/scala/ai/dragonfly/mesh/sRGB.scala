@@ -1,5 +1,7 @@
 package ai.dragonfly.mesh
 
+import scala.scalajs.js.annotation.{JSExportAll, JSExportTopLevel}
+
 type ARGB32 = Int
 
 object sRGB {
@@ -19,6 +21,7 @@ object sRGB {
    * @return an instance of the ARGB case class.
    * @example {{{ val c = ARGB32(72,105,183) }}}
    */
+  @JSExportTopLevel("sRGB")
   def apply(red: Int, green: Int, blue: Int): sRGB = apply(255, red, green, blue)
 
 
@@ -36,47 +39,49 @@ object sRGB {
    * @return an instance of the ARGB case class.
    * @example {{{ val c = ARGB32(72,105,183) }}}
    */
+  @JSExportTopLevel("sARGB")
   def apply(alpha: Int, red: Int, green: Int, blue: Int): sRGB = apply((alpha << 24) | (red << 16) | (green << 8) | blue)
 
 }
 
+@JSExportAll
 case class sRGB(argb:ARGB32) {
-  inline def alpha: Int = argb >> 24 & 0xff
+  lazy val alpha: Int = argb >> 24 & 0xff
 
   /**
    * @return the red component of this color in ARGB space with values ranging from: [0-255]
    */
-  inline def red: Int = argb >> 16 & 0xff
+  lazy val red: Int = argb >> 16 & 0xff
 
   /**
    * @return the green component of this color in ARGB space with values ranging from: [0-255]
    */
-  inline def green: Int = argb >> 8 & 0xff
+  lazy val green: Int = argb >> 8 & 0xff
 
   /**
    * @return the blue component of this color in ARGB space with values ranging from: [0-255]
    */
-  inline def blue: Int = argb & 0xff
+  lazy val blue: Int = argb & 0xff
 
 
   /**
    * @return the red component of this color in ARGB space with values ranging from: [0.0f-1.0f]
    */
-  inline def normalizedRed: Float = red / 255f
+  lazy val normalizedRed: Float = red / 255f
 
   /**
    * @return the green component of this color in ARGB space with values ranging from: [0.0f-1.0f]
    */
-  inline def normalizedGreen: Float =  green / 255f
+  lazy val normalizedGreen: Float =  green / 255f
 
   /**
    * @return the blue component of this color in ARGB space with values ranging from: [0.0f-1.0f]
    */
-  inline def normalizedBlue: Float =  blue / 255f
+  lazy val normalizedBlue: Float =  blue / 255f
 
   /**
    * @return the alpha component of this color in ARGB space with values ranging from: [0.0f-1.0f]
    */
 
-  inline def normalizedAlpha: Float =  alpha / 255f
+  lazy val normalizedAlpha: Float =  alpha / 255f
 }

@@ -6,7 +6,10 @@ import ai.dragonfly.math.Constant.π
 import ai.dragonfly.math.{cubeInPlace, squareInPlace}
 import ai.dragonfly.mesh.*
 
+import scala.scalajs.js.annotation.JSExportTopLevel
+
 object Cylinder {
+  @JSExportTopLevel("Cylinder")
   def apply(angularSegments: Int = 36, sideSegments: Int = 1, baseSegments: Int = 1, capSegments: Int = 1, radius: Double = 1.0, height: Double = 1.0): Mesh = {
     Drum.apply(angularSegments, sideSegments, baseSegments, capSegments, radius, radius, height)
   }

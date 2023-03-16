@@ -6,6 +6,8 @@ import ai.dragonfly.math.Constant.π
 import ai.dragonfly.math.{cubeInPlace, squareInPlace}
 import ai.dragonfly.mesh.*
 
+import scala.scalajs.js.annotation.JSExportTopLevel
+
 object Cube {
 
   def corners(l: Double): NArray[NArray[Vector3]] = NArray[NArray[Vector3]](
@@ -56,8 +58,10 @@ object Cube {
     points
   }
 
+  @JSExportTopLevel("MinimalCube")
   def minimal(l:Double = 1.0): Mesh = apply(l, 2) // apply(l, 1)
 
+  @JSExportTopLevel("Cube")
   def apply(l: Double = 1.0, n: Int = 64, name:String = "Cube"): Mesh = {
 
     if (n < 2) throw IllegalArgumentException("A cube must have at least two points on each line segment.")

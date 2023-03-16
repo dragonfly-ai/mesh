@@ -5,8 +5,11 @@ import ai.dragonfly.math.vector.Vector3
 import ai.dragonfly.mesh.{Mesh, Triangle}
 import narr.NArray
 
+import scala.scalajs.js.annotation.*
+
 object Screw {
 
+  @JSExportTopLevel("Screw")
   def apply(
     length:Double = 10.0, threadsPerUnit:Double = 2.0, threadThickness:Double = 0.05, shankLength:Double = 1.5,
     pointLength:Double = 1.0, angularSegments:Int = 12, threadRadius:Double = 0.375, coreRadius:Double = 0.25,

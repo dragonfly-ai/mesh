@@ -3,9 +3,10 @@ package ai.dragonfly.mesh
 import ai.dragonfly.math.vector.Vector3
 import narr.NArray
 
+import scala.scalajs.js.annotation.{JSExportAll, *}
 import scala.util.Random
 
-
+@JSExportTopLevel("Mesh") @JSExportAll
 object Mesh {
   def combine(name: String, meshes: Mesh*): Mesh = {
     var pointCount = 0
@@ -42,6 +43,7 @@ object Mesh {
   }
 }
 
+@JSExportAll
 class Mesh(val points: NArray[Vector3], val triangles: NArray[Triangle], val name:String = "Untitled Mesh") {
 
   def scale(scalar: Double): Unit = {
@@ -78,8 +80,9 @@ class Mesh(val points: NArray[Vector3], val triangles: NArray[Triangle], val nam
 }
 
 
+@JSExportTopLevel("Triangle") @JSExportAll
 object Triangle {
-  inline def nonZeroArea(p0:Vector3, p1:Vector3, p2:Vector3): Boolean = (p1 - p0).cross(p2 - p0).magnitudeSquared > 0
+  def nonZeroArea(p0:Vector3, p1:Vector3, p2:Vector3): Boolean = (p1 - p0).cross(p2 - p0).magnitudeSquared > 0
 
   def fromQuad(v1: Int, v2: Int, v3: Int, v4: Int):NArray[Triangle] = {
     val out:NArray[Triangle] = new NArray[Triangle](2)
@@ -89,10 +92,11 @@ object Triangle {
   }
 }
 
+@JSExportAll
 case class Triangle(v1: Int, v2: Int, v3: Int) {
   def offset(delta: Int): Triangle = Triangle(v1 + delta, v2 + delta, v3 + delta)
 
-  inline def nonZeroArea(points: NArray[Vector3]):Boolean = Triangle.nonZeroArea(points(v1), points(v2), points(v3))
+  def nonZeroArea(points: NArray[Vector3]):Boolean = Triangle.nonZeroArea(points(v1), points(v2), points(v3))
 
   override def toString: String = s"Triangle($v1, $v2, $v3)"
 }
