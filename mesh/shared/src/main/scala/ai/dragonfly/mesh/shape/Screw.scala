@@ -11,8 +11,8 @@ object Screw {
 
   @JSExportTopLevel("Screw")
   def apply(
-    length:Double = 10.0, threadsPerUnit:Double = 2.0, threadThickness:Double = 0.05, shankLength:Double = 1.5,
-    pointLength:Double = 1.0, angularSegments:Int = 12, threadRadius:Double = 0.375, coreRadius:Double = 0.25,
+    length:Double = 7.0, threadsPerUnit:Double = 2.0, threadThickness:Double = 0.05, shankLength:Double = 1.5,
+    pointLength:Double = 3.5, angularSegments:Int = 12, threadRadius:Double = 0.375, coreRadius:Double = 0.25,
     name:String = "Screw"
   ): Mesh = {
 
@@ -25,6 +25,7 @@ object Screw {
 
     // populate set of points
     val points: NArray[Vector3] = new NArray[Vector3]( shankPointCount + threadPointCount + 3 )
+    val lastPointIndex:Int = points.length - 1
 
     var p:Int = 0
     var dTheta:Double = 2 * π / angularSegments
@@ -114,9 +115,9 @@ object Screw {
       z -= dZ
     }
 
-    points(points.length - 1) = Vector3(0.0, 0.0, 0.0)
+    points(lastPointIndex) = Vector3(0.0, 0.0, 0.0)
 
-    val triangles: NArray[Triangle] = new NArray[Triangle](7 * angularSegments + 2 * threadPointCount + 2)
+    val triangles: NArray[Triangle] = new NArray[Triangle](6 * angularSegments + 2 * threadPointCount - (angularSegments - 2))
 
     p = 0
     var t:Int = 0
@@ -175,7 +176,7 @@ object Screw {
       p1 += 4
     }
 
-    // last 2 core quads
+    // lastPointIndex 2 core quads
     t = addQuad(p - 1 + 5 * angularSegments, p + angularSegments, p - 5 + 5 * angularSegments, p + 2 + angularSegments, triangles, t)
     t = addQuad(
       p + 3 + 5 * angularSegments,
@@ -188,7 +189,7 @@ object Screw {
 
     p = 3 * angularSegments + 2
 
-    while (p + 4 < points.length - 1) {
+    while (p + 7 < lastPointIndex) {
 
       // thread
       t = addQuad(p, p + 5, p + 4, p + 1, triangles, t)
@@ -196,7 +197,10 @@ object Screw {
       t = addQuad(p + 2, p + 7, p + 6, p + 3, triangles, t)
 
       // core
-      t = addQuad(p + 4 * angularSegments + 4, p + 3, p + 4 * angularSegments, p + 7, triangles, t)
+      val lastCorePoint:Int = p + 4 * angularSegments + 4
+      if (lastCorePoint < lastPointIndex) {
+        t = addQuad(lastCorePoint, p + 3, lastCorePoint - 4, p + 7, triangles, t)
+      }
 
       p += 4
     }
@@ -204,17 +208,16 @@ object Screw {
     // thread cap
     t = addQuad(p + 3, p + 1, p + 2, p, triangles, t)
 
-    val last:Int = points.length - 1
-    p0 = last - 1
+    p0 = lastPointIndex - 1
     p1 = p0 - 4
-    while (p0 > last - 4 * angularSegments) {
-      triangles(t) = Triangle(last, p0, p1)
+    while (p0 > lastPointIndex - 4 * angularSegments) {
+      triangles(t) = Triangle(lastPointIndex, p0, p1)
       t += 1
       p0 -= 4
       p1 -= 4
     }
 
-//    println(s"t = $t and triangles.length = ${triangles.length}")
+    println(s"t = $t and triangles.length = ${triangles.length}")
 
     Mesh(points, triangles, name)
   }
