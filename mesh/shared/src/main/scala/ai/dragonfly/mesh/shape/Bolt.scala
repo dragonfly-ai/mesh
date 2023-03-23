@@ -8,10 +8,24 @@ import narr.*
 import scala.scalajs.js.annotation.JSExportTopLevel
 
 object Bolt {
+
+  /**
+   * Generate a 3D mesh of a threaded Bolt.
+   *
+   * @param length          The total length of the entire screw. Must be greater than 0.0.
+   * @param threadsPerUnit  How many thread revolutions complete per unit of distance along the bolt.
+   * @param threadThickness The thickness of the thread.  Must be within the range of: (0.0, 1.0 / threadsPerUnit].
+   * @param shankLength     How much of the length of the bolt to allocate to the shank.  Must be within the range of: (0.0, length - pointLength].
+   * @param angularSegments How many segments to approximate the circle.  Must be greater than 2.
+   * @param threadRadius    The maximum radius of the entire bolt.  Must be greater than coreRadius.
+   * @param coreRadius      The radius of the core.  Must be within the range of: (0.0, threadRadius).
+   * @param name            The name of the mesh.
+   * @return a 3d Mesh of a Bolt that reflects the specifications given by the parameters.
+   */
   @JSExportTopLevel("Bolt")
   def apply(
     length: Double = 10.0, threadsPerUnit: Double = 3.0, threadThickness: Double = 0.1, shankLength: Double = 3.5,
-    angularSegments: Int = 36, threadRadius: Double = 1.0, coreRadius: Double = 0.85, name: String = "Bolt"
+    angularSegments: Int = 12, threadRadius: Double = 1.0, coreRadius: Double = 0.85, name: String = "Bolt"
   ): Mesh = {
 
     // calculate cardinality of the set of points:
@@ -23,6 +37,7 @@ object Bolt {
 
     // populate set of points
     val points: NArray[Vector3] = new NArray[Vector3](shankPointCount + threadPointCount + 3)
+    val lastPointIndex:Int = points.length - 1
 
     var p: Int = 0
     var dTheta: Double = 2 * π / angularSegments
@@ -106,9 +121,9 @@ object Bolt {
       z -= dZ
     }
 
-    points(points.length - 1) = Vector3(0.0, 0.0, 0.0)
+    points(lastPointIndex) = Vector3(0.0, 0.0, 0.0)
 
-    val triangles: NArray[Triangle] = new NArray[Triangle](7 * angularSegments + 2 * threadPointCount + 3)
+    val triangles: NArray[Triangle] = new NArray[Triangle](6 * angularSegments + 2 * threadPointCount - (angularSegments - 4)) //7 * angularSegments + 2 * threadPointCount + 3)
 
     p = 0
     var t: Int = 0
@@ -167,7 +182,7 @@ object Bolt {
       p1 += 4
     }
 
-    // last 2 core quads
+    // lastPointIndex 2 core quads
     t = addQuad(p - 1 + 5 * angularSegments, p + angularSegments, p - 5 + 5 * angularSegments, p + 2 + angularSegments, triangles, t)
     t = addQuad(
       p + 3 + 5 * angularSegments,
@@ -180,7 +195,7 @@ object Bolt {
 
     p = 3 * angularSegments + 2
 
-    while (p + 4 < points.length - 1) {
+    while (p + 7 < lastPointIndex) {
 
       // thread
       t = addQuad(p, p + 5, p + 4, p + 1, triangles, t)
@@ -188,7 +203,10 @@ object Bolt {
       t = addQuad(p + 2, p + 7, p + 6, p + 3, triangles, t)
 
       // core
-      t = addQuad(p + 4 * angularSegments + 4, p + 3, p + 4 * angularSegments, p + 7, triangles, t)
+      val lastCorePoint: Int = p + 4 * angularSegments + 4
+      if (lastCorePoint < lastPointIndex) {
+        t = addQuad(lastCorePoint, p + 3, lastCorePoint - 4, p + 7, triangles, t)
+      }
 
       p += 4
     }
@@ -196,17 +214,20 @@ object Bolt {
     // thread cap
     t = addQuad(p + 3, p + 1, p + 2, p, triangles, t)
 
-    val last: Int = points.length - 1
-    p0 = last - 1
+    p0 = lastPointIndex - 1
     p1 = p0 - 4
-    while (p0 > last - 4 * angularSegments) {
-      triangles(t) = Triangle(last, p0, p1)
+    while (p0 > lastPointIndex - 4 * angularSegments) {
+      triangles(t) = Triangle(lastPointIndex, p0, p1)
       t += 1
       p0 -= 4
       p1 -= 4
     }
 
-    triangles(t) = Triangle(last - 4, last - 1, last)
+    triangles(t) = Triangle(lastPointIndex - 4, lastPointIndex - 1, lastPointIndex)
+    t += 1
+    triangles(t) = Triangle(lastPointIndex - 4 - (4 * angularSegments), lastPointIndex - 4, lastPointIndex)
+
+    println(s"t = $t and triangles.length = ${triangles.length}")
 
     Mesh(points, triangles, name)
   }

@@ -35,14 +35,13 @@ let container;
 
 let camera, cameraTarget, scene, renderer, controls, scale;
 
-
-
 function init() {
 
   container = document.getElementById( 'viewer' );
 
   camera = new THREE.PerspectiveCamera( 35, window.innerWidth / window.innerHeight, 0.5, 99999999 );
   camera.position.set( 2, 1, 2 );
+  camera.up.set(0,0,1);
 
   cameraTarget = new THREE.Vector3( 0, 0, 0 );
 
@@ -53,8 +52,52 @@ function init() {
 
   const loader = new PLYLoader();
 
+  const geometry = loader.parse(
+    PLY.fromMesh(
+        (function() {
 
-  const geometry = loader.parse(PLY.fromMesh(Screw(), PLY.randomVertexColorMapper))
+            const threadsPerUnit = 0.5 + Math.random() * 3.0;
+            const coreRadius = 0.1 + 5.0 * Math.random();
+            const parameters = {
+                "length" : 5 + Math.random() * 10.0,
+                "threadsPerUnit" : threadsPerUnit,
+                "threadThickness" : Math.random() * (1.0 / threadsPerUnit),
+                "shankLength" : 0.5 + Math.random() * 3.5,
+                "angularSegments" : 3 + Math.random() * 36,
+                "threadRadius" : coreRadius + coreRadius * Math.random(),
+                "coreRadius" : coreRadius,
+                "shankLength" : 0.5 + Math.random() * 3.5
+            };
+
+            if (Math.random() > 0.5) {
+                return Bolt(
+                    parameters.length,
+                    parameters.threadsPerUnit,
+                    parameters.threadThickness,
+                    parameters.shankLength,
+                    parameters.angularSegments,
+                    parameters.threadRadius,
+                    parameters.coreRadius,
+                    "Randomly Generated Bolt"
+                );
+            }
+            else {
+                return Screw(
+                    parameters.length,
+                    parameters.threadsPerUnit,
+                    parameters.threadThickness,
+                    parameters.shankLength,
+                    Math.random() * (parameters.length - parameters.shankLength),  // pointLength
+                    parameters.angularSegments,
+                    parameters.threadRadius,
+                    parameters.coreRadius,
+                    parameters.name
+                );
+            }
+        })(),
+        PLY.randomVertexColorMapper
+    )
+  );
 
   geometry.computeVertexNormals();
 

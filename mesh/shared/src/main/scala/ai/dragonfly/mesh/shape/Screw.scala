@@ -9,10 +9,23 @@ import scala.scalajs.js.annotation.*
 
 object Screw {
 
+  /**
+   * Generate a 3D mesh of a threaded screw.
+   * @param length The total length of the entire screw. Must be greater than 0.0.
+   * @param threadsPerUnit How many thread revolutions complete per unit of distance along the screw.
+   * @param threadThickness The thickness of the thread.  Must be within the range of: (0.0, 1.0 / threadsPerUnit].
+   * @param shankLength How much of the length of the screw to allocate to the shank.  Must be within the range of: (0.0, length - pointLength].
+   * @param pointLength How much of the length of the screw to allocate to the point.  The point steps linearly from thread radius to 0.
+   * @param angularSegments How many segments to approximate the circle.  Must be greater than 2.
+   * @param threadRadius The maximum radius of the entire screw.  Must be greater than coreRadius.
+   * @param coreRadius The radius of the core.  Must be within the range of: (0.0, threadRadius).
+   * @param name The name of the mesh.
+   * @return a 3d Mesh of a screw that reflects the specifications given by the parameters.
+   */
   @JSExportTopLevel("Screw")
   def apply(
     length:Double = 7.0, threadsPerUnit:Double = 2.0, threadThickness:Double = 0.05, shankLength:Double = 1.5,
-    pointLength:Double = 3.5, angularSegments:Int = 12, threadRadius:Double = 0.375, coreRadius:Double = 0.25,
+    pointLength:Double = 0.5, angularSegments:Int = 12, threadRadius:Double = 0.375, coreRadius:Double = 0.25,
     name:String = "Screw"
   ): Mesh = {
 
@@ -84,7 +97,7 @@ object Screw {
 
       pntAlpha = if (z < pointLength) 1.0 - ((pointLength - z) / pointLength) else 1.0
 
-      val z1: Double = z - (pntAlpha * threadThickness)
+      val z1: Double = z - threadThickness
 
       points(p) = Vector3(
         pntAlpha * coreRadius * Math.cos(theta), // x
@@ -117,7 +130,7 @@ object Screw {
 
     points(lastPointIndex) = Vector3(0.0, 0.0, 0.0)
 
-    val triangles: NArray[Triangle] = new NArray[Triangle](6 * angularSegments + 2 * threadPointCount - (angularSegments - 2))
+    val triangles: NArray[Triangle] = new NArray[Triangle](6 * angularSegments + 2 * threadPointCount - (angularSegments - 4))
 
     p = 0
     var t:Int = 0
@@ -216,6 +229,10 @@ object Screw {
       p0 -= 4
       p1 -= 4
     }
+
+    triangles(t) = Triangle(lastPointIndex - 4, lastPointIndex - 1, lastPointIndex - 4 - (4 * angularSegments))
+    t += 1
+    triangles(t) = Triangle(lastPointIndex - 4 - (4 * angularSegments), lastPointIndex - 1, lastPointIndex)
 
     println(s"t = $t and triangles.length = ${triangles.length}")
 
