@@ -3,11 +3,22 @@ package ai.dragonfly.mesh
 import ai.dragonfly.math.vector.Vector3
 import narr.NArray
 
+import scala.collection.mutable
 import scala.scalajs.js.annotation.{JSExportAll, *}
 import scala.util.Random
 
 @JSExportTopLevel("Mesh") @JSExportAll
 object Mesh {
+
+  def fromPointsAndHashSet(points:NArray[Vector3], triangleSet:mutable.HashSet[Triangle], name:String):Mesh = {
+    val triangles:NArray[Triangle] = new NArray[Triangle](triangleSet.size)
+    var i:Int = 0
+    for (t <- triangleSet) {
+      triangles(i) = t
+      i += 1
+    }
+    new Mesh(points, triangles, name)
+  }
   def combine(name: String, meshes: Mesh*): Mesh = {
     var pointCount = 0
     var polygonCount = 0
@@ -18,7 +29,7 @@ object Mesh {
     }
 
     val points: NArray[Vector3] = new NArray[Vector3](pointCount)
-    val polygons: NArray[Triangle] = new NArray[Triangle](polygonCount)
+    val triangles: NArray[Triangle] = new NArray[Triangle](polygonCount)
 
     var pi: Int = 0
     var tj = 0
@@ -32,14 +43,14 @@ object Mesh {
       }
 
       for (polygon <- m.triangles) {
-        polygons(tj) = polygon.offset(pi)
+        triangles(tj) = polygon.offset(pi)
         tj = tj + 1
       }
 
       pi = pi + m.points.length
     }
 
-    Mesh(points, polygons)
+    new Mesh(points, triangles, name)
   }
 }
 
@@ -53,6 +64,8 @@ class Mesh(val points: NArray[Vector3], val triangles: NArray[Triangle], val nam
   def translate(offset:Vector3): Unit = {
     for (p <- points) p.add(offset)
   }
+
+  def transform(f: Vector3 => Vector3):Mesh = new Mesh( points.map(f), triangles )
 
   def copy(copyName:String = this.name):Mesh = new Mesh(
     NArray.tabulate[Vector3](points.length)((i:Int) => points(i)),
@@ -77,26 +90,4 @@ class Mesh(val points: NArray[Vector3], val triangles: NArray[Triangle], val nam
     i = 0;
     sb.append("\t}\n").append("}\n").toString()
   }
-}
-
-
-@JSExportTopLevel("Triangle") @JSExportAll
-object Triangle {
-  def nonZeroArea(p0:Vector3, p1:Vector3, p2:Vector3): Boolean = (p1 - p0).cross(p2 - p0).magnitudeSquared > 0
-
-  def fromQuad(v1: Int, v2: Int, v3: Int, v4: Int):NArray[Triangle] = {
-    val out:NArray[Triangle] = new NArray[Triangle](2)
-    out(0) = Triangle(v1, v2, v3)
-    out(1) = Triangle(v1, v3, v4)
-    out
-  }
-}
-
-@JSExportAll
-case class Triangle(v1: Int, v2: Int, v3: Int) {
-  def offset(delta: Int): Triangle = Triangle(v1 + delta, v2 + delta, v3 + delta)
-
-  def nonZeroArea(points: NArray[Vector3]):Boolean = Triangle.nonZeroArea(points(v1), points(v2), points(v3))
-
-  override def toString: String = s"Triangle($v1, $v2, $v3)"
 }

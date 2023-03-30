@@ -187,6 +187,6 @@ object Cube {
       t = addQuad(7, 5, 6, 4, triangles, t)
     }
 
-    Mesh(points, triangles, name)
+    new Mesh(points, triangles, name)
   }
 }

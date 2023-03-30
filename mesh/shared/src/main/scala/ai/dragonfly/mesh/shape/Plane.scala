@@ -65,7 +65,7 @@ object Plane {
       p = y * width + x
     }
 
-    Mesh(points, triangles)
+    new Mesh(points, triangles)
   }
 
 }

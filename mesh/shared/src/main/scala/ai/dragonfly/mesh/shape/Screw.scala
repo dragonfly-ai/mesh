@@ -236,7 +236,7 @@ object Screw {
 
     println(s"t = $t and triangles.length = ${triangles.length}")
 
-    Mesh(points, triangles, name)
+    new Mesh(points, triangles, name)
   }
 
 }

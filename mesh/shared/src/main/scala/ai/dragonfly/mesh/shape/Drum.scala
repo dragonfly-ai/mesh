@@ -121,6 +121,6 @@ object Drum {
       cut += 1
     }
     
-    Mesh(points, triangles, name)
+    new Mesh(points, triangles, name)
   }
 }

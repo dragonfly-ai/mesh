@@ -1,7 +1,8 @@
 package ai.dragonfly.mesh.io
 
 import ai.dragonfly.math.vector.Vector3
-import ai.dragonfly.mesh.{Mesh, sRGB}
+import ai.dragonfly.mesh.sRGB.*
+import ai.dragonfly.mesh.Mesh
 
 import java.io.PrintWriter
 import scala.scalajs.js.annotation.{JSExportAll, JSExportTopLevel}
@@ -15,13 +16,13 @@ object PLY {
 
   val alphaMask:Int = 0xff << 24
 
-  val randomVertexColorMapper: Vector3 => sRGB = (v:Vector3) => sRGB(alphaMask | scala.util.Random.nextInt())
+  val randomVertexColorMapper: Vector3 => ARGB32 = (v:Vector3) => ARGB32(alphaMask | scala.util.Random.nextInt())
 
-  def writeMesh(mesh: Mesh, out: java.io.OutputStream, vertexColorMapper: Vector3 => sRGB): Unit = {
+  def writeMesh(mesh: Mesh, out: java.io.OutputStream, vertexColorMapper: Vector3 => ARGB32): Unit = {
     out.write(fromMesh(mesh, vertexColorMapper).getBytes)
   }
 
-  def fromMesh(mesh: Mesh, vertexColorMapper: Vector3 => sRGB):String = {
+  def fromMesh(mesh: Mesh, vertexColorMapper: Vector3 => ARGB32):String = {
     val sb: StringBuilder = new StringBuilder()
 
     sb.append(
@@ -42,7 +43,7 @@ end_header
 
     for (i <- mesh.points.indices) {
       val v:Vector3 = mesh.points(i)
-      val c: sRGB = vertexColorMapper(v)
+      val c: ARGB32 = vertexColorMapper(v)
       sb.append(s"${v.x} ${v.y} ${v.z} ${c.red} ${c.green} ${c.blue} ${c.alpha}\n")
     }
 
