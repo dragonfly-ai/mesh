@@ -82,7 +82,7 @@ object Drum {
     //    println(pcount)
 
     val triangles: NArray[Triangle] = new NArray[Triangle](
-      2 * angularSegments * ( sideSegments + baseSegments + capSegments)
+      2 * angularSegments * ( baseSegments + capSegments + sideSegments - 1 )
     )
 
     p = 1
@@ -120,7 +120,9 @@ object Drum {
       }
       cut += 1
     }
-    
+
+    println(s"triangles.length = ${triangles.length}, and t = $t")
+
     new Mesh(points, triangles, name)
   }
 }

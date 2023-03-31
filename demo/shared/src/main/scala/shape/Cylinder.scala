@@ -1,6 +1,7 @@
 package shape
 
 import ai.dragonfly.democrossy.Demonstration
+import ai.dragonfly.mesh.io.PLY
 
 object Cylinder extends Demonstration {
 

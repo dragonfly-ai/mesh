@@ -3,7 +3,7 @@ ThisBuild / publishTo := Some( Resolver.file( "file",  new File("/var/www/maven"
 ThisBuild / resolvers += "ai.dragonfly.code" at "https://code.dragonfly.ai/"
 ThisBuild / organization := "ai.dragonfly.code"
 ThisBuild / scalacOptions ++= Seq("-feature", "-deprecation")
-ThisBuild / version := "0.02.41.5401"
+ThisBuild / version := "0.03.41.5401"
 
 lazy val mesh = crossProject(JSPlatform, JVMPlatform, NativePlatform)
   .crossType(CrossType.Full)
