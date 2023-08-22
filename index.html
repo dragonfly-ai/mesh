@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Threaded Objects: Bolts and Screws</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+</head>
+<body>
+<div id="viewer" style="position:absolute; top:0px; left:0px;"></div>
+
+<!-- script src="https://cdn.jsdelivr.net/npm/eruda"></script><script>eruda.init();</script -->
+
+<script async src="https://unpkg.com/es-module-shims@1.3.6/dist/es-module-shims.js"></script>
+<script type="importmap">
+{
+    "imports": {
+        "three": "https://unpkg.com/three@0.141.0/build/three.module.js"
+    }
+}
+</script>
+
+<form id="parameters" method="get">
+    <label for="length">Length in cm:</label>
+    <input type="text" id="length" name="length" required minlength="4" maxlength="8" size="10">
+</form>
+<script type="module">
+
+import * as THREE from 'three';
+
+import { OrbitControls } from 'https://unpkg.com/three@0.141.0/examples/jsm/controls/OrbitControls.js';
+
+import { PLYLoader } from 'https://unpkg.com/three@0.141.0/examples/jsm/loaders/PLYLoader.js';
+
+let container;
+
+let camera, cameraTarget, scene, renderer, controls, scale;
+
+function init() {
+
+  container = document.getElementById( 'viewer' );
+
+  camera = new THREE.PerspectiveCamera( 35, window.innerWidth / window.innerHeight, 0.5, 99999999 );
+  camera.position.set( 2, 1, 2 );
+  camera.up.set(0,0,1);
+
+  cameraTarget = new THREE.Vector3( 0, 0, 0 );
+
+  scene = new THREE.Scene();
+  scene.background = new THREE.Color( 0x444444 );
+
+  // PLY file
+
+  const loader = new PLYLoader();
+
+  const geometry = loader.parse(
+    PLY.fromMesh(
+        (function() {
+
+            const threadsPerUnit = 0.5 + Math.random() * 3.0;
+            const coreRadius = 0.1 + 5.0 * Math.random();
+            const parameters = {
+                "length" : 5 + Math.random() * 10.0,
+                "threadsPerUnit" : threadsPerUnit,
+                "threadThickness" : Math.random() * (1.0 / threadsPerUnit),
+                "shankLength" : 0.5 + Math.random() * 3.5,
+                "angularSegments" : 3 + Math.random() * 36,
+                "threadRadius" : coreRadius + coreRadius * Math.random(),
+                "coreRadius" : coreRadius,
+                "shankLength" : 0.5 + Math.random() * 3.5
+            };
+
+            if (Math.random() > 0.5) {
+                return Bolt(
+                    parameters.length,
+                    parameters.threadsPerUnit,
+                    parameters.threadThickness,
+                    parameters.shankLength,
+                    parameters.angularSegments,
+                    parameters.threadRadius,
+                    parameters.coreRadius,
+                    "Randomly Generated Bolt"
+                );
+            }
+            else {
+                return Screw(
+                    parameters.length,
+                    parameters.threadsPerUnit,
+                    parameters.threadThickness,
+                    parameters.shankLength,
+                    Math.random() * (parameters.length - parameters.shankLength),  // pointLength
+                    parameters.angularSegments,
+                    parameters.threadRadius,
+                    parameters.coreRadius,
+                    parameters.name
+                );
+            }
+        })(),
+        PLY.randomVertexColorMapper
+    )
+  );
+
+  geometry.computeVertexNormals();
+
+  geometry.computeBoundingBox();
+  var origin = geometry.boundingBox.getCenter(new THREE.Vector3());
+  //console.log(origin);
+  geometry.center();
+
+  geometry.computeBoundingBox();
+  var offset = geometry.boundingBox.getCenter(new THREE.Vector3());
+  offset.sub(origin);
+  //console.log(offset);
+
+  const material = new THREE.MeshBasicMaterial( { vertexColors: true } );
+  const mesh = new THREE.Mesh( geometry, material );
+
+  mesh.scale.multiplyScalar( 0.25 );
+  mesh.castShadow = false;
+  mesh.receiveShadow = false;
+
+  scene.add( mesh );
+
+
+  // no Lights!
+  // renderer
+
+  renderer = new THREE.WebGLRenderer( { antialias: true } );
+  renderer.setPixelRatio( window.devicePixelRatio );
+  renderer.setSize( window.innerWidth, window.innerHeight );
+  renderer.outputEncoding = THREE.sRGBEncoding;
+
+  renderer.shadowMap.enabled = false;
+
+  container.appendChild( renderer.domElement );
+
+
+  controls = new OrbitControls( camera, renderer.domElement );
+  controls.target.set( 0, 0, 0 );
+  controls.update();
+  controls.enablePan = false;
+  controls.enableDamping = true;
+
+  // resize
+
+  window.addEventListener( 'resize', onWindowResize );
+
+}
+
+
+init();
+
+function onWindowResize() {
+
+	camera.aspect = window.innerWidth / window.innerHeight;
+	camera.updateProjectionMatrix();
+
+	renderer.setSize( window.innerWidth, window.innerHeight );
+
+}
+
+
+function render() {
+
+	controls.update();
+
+	renderer.render( scene, camera );
+
+}
+
+function animate() {
+
+	requestAnimationFrame( animate );
+
+	render();
+
+}
+
+animate();
+
+render();
+</script>
+<script type="application/javascript" src="js/main.js"></script>
+</body>
+</html>
