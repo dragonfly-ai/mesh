@@ -9,9 +9,9 @@ object Plane extends Demonstration {
     println(
       ai.dragonfly.mesh.io.PLY.fromMesh(
         ai.dragonfly.mesh.shape.Plane(
-          Vector3(0, 0, 1),
-          Vector3(4, 0, 2),
-          Vector3(0, 4, 3),
+          Vec[3](0, 0, 1),
+          Vec[3](4, 0, 2),
+          Vec[3](0, 4, 3),
           9,
           12
         )

@@ -1,8 +1,11 @@
 package ai.dragonfly.mesh.io
 
-import ai.dragonfly.mesh.*
-import ai.dragonfly.math.vector.Vector3
 import narr.*
+
+import ai.dragonfly.math.vector.*
+import Vec.*
+
+import ai.dragonfly.mesh.*
 
 import java.io.{BufferedReader, InputStream, InputStreamReader, OutputStream}
 import scala.collection.mutable
@@ -21,7 +24,11 @@ object OBJ {
     sb.append(s"#  $comment\n")
     sb.append(s"mtllib $materialLibraryFile")
     sb.append(s"o $name\n")
-    for (p <- mesh.points) { sb.append(s"v ${p.x} ${p.z} ${p.y}\n") }
+    var i:Int = 0; while (i < mesh.points.length) {
+      val p = mesh.points(i)
+      sb.append(s"v ${p.x} ${p.z} ${p.y}\n")
+      i += 1
+    }
 
     if (smooth) sb.append(s"s 1\n")
 
@@ -56,9 +63,11 @@ object OBJ {
     var mi:Int = 0; while (mi < meshGroup.meshes.length) {
       var pj = 0
       val m:Mesh = meshGroup.meshes(mi)
-      for (p <- m.points) {
+      var i:Int = 0; while (i < m.points.length) {
+        val p = m.points(i)
         pointSB.append(s"v ${-p.x} ${p.z} ${p.y}\n")
         pj = pj + 1
+        i += 1
       }
 
       var tj = 0
@@ -88,12 +97,12 @@ object OBJ {
     out.write(OBJ.fromMaterialMeshGroup(meshGroup, comment, materialLibraryFileName).getBytes)
   }
 
-  def parseVertex(line:String):Option[Vector3] = {
+  def parseVertex(line:String):Option[Vec[3]] = {
     vertexLine.s.unapplySeq(line) match {
       case Some(Seq(xS:String, yS:String, zS:String)) =>
         try {
           Some(
-            Vector3(
+            Vec[3](
               java.lang.Double.parseDouble(xS),
               java.lang.Double.parseDouble(yS),
               java.lang.Double.parseDouble(zS)
@@ -139,12 +148,12 @@ object OBJ {
 //    val br: java.io.BufferedReader = new BufferedReader(new InputStreamReader(is, "UTF-8"))
 //
 //    var line = br.readLine()
-//    var points:List[Vector3] = List[Vector3]()
+//    var points:List[Vec[3]] = List[Vec[3]]()
 //    var triangles:List[Triangle] = List[Triangle]()
 //
 //    while (line != null) {
 //      parseVertex(line) match {
-//        case Some(p: Vector3) =>
+//        case Some(p: Vec[3]) =>
 //          points = points.appended(p)
 //        case None =>
 //          parseFace(line) match {
@@ -156,7 +165,7 @@ object OBJ {
 //      line = br.readLine()
 //    }
 //    br.close()
-//    val pointsArr:NArray[Vector3] = NArray.tabulate[Vector3](points.size)((i:Int) => points(i))
+//    val pointsArr:NArray[Vec[3]] = NArray.tabulate[Vec[3]](points.size)((i:Int) => points(i))
 //    val triangleArr:NArray[Triangle] = NArray.tabulate[Triangle](triangles.size)((i:Int) => triangles(i))
 //
 //    MaterialMeshGroup(MTL.default, )

@@ -1,16 +1,18 @@
 package ai.dragonfly.mesh
 
-import ai.dragonfly.math.vector.Vector3
-import narr.NArray
+import narr.*
+
+import ai.dragonfly.math.vector.*
+import Vec.*
 
 import scala.collection.mutable
 import scala.scalajs.js.annotation.{JSExportAll, *}
-import scala.util.Random
+
 
 @JSExportTopLevel("Mesh") @JSExportAll
 object Mesh {
 
-  def fromPointsAndHashSet(points:NArray[Vector3], triangleSet:mutable.HashSet[Triangle], name:String):Mesh = {
+  def fromPointsAndHashSet(points:NArray[Vec[3]], triangleSet:mutable.HashSet[Triangle], name:String):Mesh = {
     val triangles:NArray[Triangle] = new NArray[Triangle](triangleSet.size)
     var i:Int = 0
     for (t <- triangleSet) {
@@ -28,7 +30,7 @@ object Mesh {
       polygonCount = polygonCount + m.triangles.length
     }
 
-    val points: NArray[Vector3] = new NArray[Vector3](pointCount)
+    val points: NArray[Vec[3]] = NArray.ofSize[Vec[3]](pointCount)
     val triangles: NArray[Triangle] = new NArray[Triangle](polygonCount)
 
     var pi: Int = 0
@@ -37,9 +39,10 @@ object Mesh {
     for (m <- meshes) {
       var pj = pi
 
-      for (p <- m.points) {
-        points(pj) = p
+      var p:Int = 0; while (p < m.points.length) {
+        points(pj) = m.points(p)
         pj = pj + 1
+        p += 1
       }
 
       for (polygon <- m.triangles) {
@@ -55,20 +58,30 @@ object Mesh {
 }
 
 @JSExportAll
-class Mesh(val points: NArray[Vector3], val triangles: NArray[Triangle], val name:String = "Untitled Mesh") {
+class Mesh(val points: NArray[Vec[3]], val triangles: NArray[Triangle], val name:String = "Untitled Mesh") {
 
   def scale(scalar: Double): Unit = {
-    for (p <- points) p.scale(scalar)
+    var p:Int = 0; while (p < points.length) {
+      points(p).scale(scalar)
+      p += 1
+    }
   }
 
-  def translate(offset:Vector3): Unit = {
-    for (p <- points) p.add(offset)
+  def translate(offset:Vec[3]): Unit = {
+    var p: Int = 0;
+    while (p < points.length) {
+      points(p).add(offset)
+      p += 1
+    }
   }
 
-  def transform(f: Vector3 => Vector3):Mesh = new Mesh( points.map(f), triangles )
+  def transform(f: Vec[3] => Vec[3]):Mesh = new Mesh(
+    NArray.tabulate[Vec[3]](points.length)((i:Int) => f(points(i))),
+    triangles
+  )
 
   def copy(copyName:String = this.name):Mesh = new Mesh(
-    NArray.tabulate[Vector3](points.length)((i:Int) => points(i)),
+    NArray.tabulate[Vec[3]](points.length)((i:Int) => points(i)),
     NArray.tabulate[Triangle](triangles.length)((i:Int) => triangles(i)),
     copyName
   )

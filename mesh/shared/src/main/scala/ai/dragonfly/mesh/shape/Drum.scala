@@ -1,9 +1,15 @@
 package ai.dragonfly.mesh.shape
 
 import narr.*
-import ai.dragonfly.math.vector.*
+import Extensions.given
+import scala.language.implicitConversions
+
 import ai.dragonfly.math.Constant.π
 import ai.dragonfly.math.{cubeInPlace, squareInPlace}
+
+import ai.dragonfly.math.vector.*
+import Vec.*
+
 import ai.dragonfly.mesh.*
 
 import scala.scalajs.js.annotation.JSExportTopLevel
@@ -23,13 +29,13 @@ object Drum {
     val Δθ: Double = (2 * π) / angularSegments
     val cuts: Int = 2 + baseSegments + sideSegments + capSegments - 3
 
-    val points: NArray[Vector3] = new NArray[Vector3](2 + (cuts * angularSegments))
+    val points: NArray[Vec[3]] = NArray.ofSize[Vec[3]](2 + (cuts * angularSegments))
     //  println(points.length)
 
     val pEnd: Int = points.length - 1
 
-    points(0) = Vector3(0, 0, 0)
-    points(pEnd) = Vector3(0, 0, height)
+    points(0) = Vec[3](0, 0, 0)
+    points(pEnd) = Vec[3](0, 0, height)
 
     var dT = 0.0
     var p = 1
@@ -69,7 +75,7 @@ object Drum {
         val y: Double = r * Math.sin(dT)
 
         val cutOffset: Int = (cut - 1) * angularSegments
-        points(cutOffset + p) = Vector3(x, y, h)
+        points(cutOffset + p) = Vec[3](x, y, h)
 
         dT = p * Δθ
         p = p + 1

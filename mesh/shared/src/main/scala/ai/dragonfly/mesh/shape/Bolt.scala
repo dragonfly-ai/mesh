@@ -1,9 +1,13 @@
 package ai.dragonfly.mesh.shape
 
-import ai.dragonfly.math.Constant.π
-import ai.dragonfly.math.vector.Vector3
-import ai.dragonfly.mesh.{Mesh, Triangle}
 import narr.*
+import Extensions.given
+import scala.language.implicitConversions
+
+import ai.dragonfly.math.Constant.π
+import ai.dragonfly.math.vector.*
+import Vec.*
+import ai.dragonfly.mesh.{Mesh, Triangle}
 
 import scala.scalajs.js.annotation.JSExportTopLevel
 
@@ -36,7 +40,7 @@ object Bolt {
     val threadPointCount: Int = 4 * ((threadedLength - threadThickness) * threadsPerUnit).toInt * angularSegments
 
     // populate set of points
-    val points: NArray[Vector3] = new NArray[Vector3](shankPointCount + threadPointCount + 3)
+    val points: NArray[Vec[3]] = NArray.ofSize[Vec[3]](shankPointCount + threadPointCount + 3)
     val lastPointIndex:Int = points.length - 1
 
     var p: Int = 0
@@ -52,10 +56,10 @@ object Bolt {
       val x: Double = threadRadius * Math.cos(theta)
       val y: Double = threadRadius * Math.sin(theta)
 
-      points(p) = Vector3(x, y, length)
-      points(p + angularSegments) = Vector3(x, y, zmsl)
+      points(p) = Vec[3](x, y, length)
+      points(p + angularSegments) = Vec[3](x, y, zmsl)
 
-      points(p + 2 * angularSegments) = Vector3(
+      points(p + 2 * angularSegments) = Vec[3](
         coreRadius * Math.cos(theta),
         coreRadius * Math.sin(theta),
         zmsl
@@ -70,7 +74,7 @@ object Bolt {
     val dZ: Double = 1.0 / (threadsPerUnit * angularSegments)
     var z: Double = threadedLength - dZ
 
-    points(p) = Vector3(
+    points(p) = Vec[3](
       threadRadius * Math.cos(theta), // x
       threadRadius * Math.sin(theta), // y
       threadedLength - threadThickness
@@ -78,7 +82,7 @@ object Bolt {
 
     p += 1
 
-    points(p) = Vector3(
+    points(p) = Vec[3](
       coreRadius * Math.cos(theta), // x
       coreRadius * Math.sin(theta), // y
       threadedLength - threadThickness
@@ -94,7 +98,7 @@ object Bolt {
 
       val z1: Double = z - threadThickness
 
-      points(p) = Vector3(
+      points(p) = Vec[3](
         coreRadius * Math.cos(theta), // x
         coreRadius * Math.sin(theta), // y
         z
@@ -104,13 +108,13 @@ object Bolt {
       val tx: Double = threadRadius * Math.cos(theta)
       val ty: Double = threadRadius * Math.sin(theta)
 
-      points(p) = Vector3(tx, ty, z)
+      points(p) = Vec[3](tx, ty, z)
       p += 1
 
-      points(p) = Vector3(tx, ty, z1)
+      points(p) = Vec[3](tx, ty, z1)
       p += 1
 
-      points(p) = Vector3(
+      points(p) = Vec[3](
         coreRadius * Math.cos(theta), // x
         coreRadius * Math.sin(theta), // y
         z1
@@ -121,7 +125,7 @@ object Bolt {
       z -= dZ
     }
 
-    points(lastPointIndex) = Vector3(0.0, 0.0, 0.0)
+    points(lastPointIndex) = Vec[3](0.0, 0.0, 0.0)
 
     val triangles: NArray[Triangle] = new NArray[Triangle](6 * angularSegments + 2 * threadPointCount - (angularSegments - 4)) //7 * angularSegments + 2 * threadPointCount + 3)
 

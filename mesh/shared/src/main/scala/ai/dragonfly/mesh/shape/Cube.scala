@@ -1,7 +1,12 @@
 package ai.dragonfly.mesh.shape
 
 import narr.*
+import Extensions.given
+import scala.language.implicitConversions
+
 import ai.dragonfly.math.vector.*
+import Vec.*
+
 import ai.dragonfly.math.Constant.π
 import ai.dragonfly.math.{cubeInPlace, squareInPlace}
 import ai.dragonfly.mesh.*
@@ -10,12 +15,14 @@ import scala.scalajs.js.annotation.JSExportTopLevel
 
 object Cube {
 
-  def corners(l: Double): NArray[NArray[Vector3]] = NArray[NArray[Vector3]](
-    NArray[Vector3](Vector3(0, 0, 0), Vector3(l, 0, 0), Vector3(l, l, 0), Vector3(0, l, 0)),
-    NArray[Vector3](Vector3(0, 0, l), Vector3(l, 0, l), Vector3(l, l, l), Vector3(0, l, l))
-  )
+  def corners(l: Double): NArray[NArray[Vec[3]]] = {
+    val out: NArray[NArray[Vec[3]]] = NArray.ofSize[NArray[NArray[Double]]](2).asInstanceOf[NArray[NArray[Vec[3]]]]
+    out(0) = NArray[Vec[3]](Vec[3](0, 0, 0), Vec[3](l, 0, 0), Vec[3](l, l, 0), Vec[3](0, l, 0))
+    out(1) = NArray[Vec[3]](Vec[3](0, 0, l), Vec[3](l, 0, l), Vec[3](l, l, l), Vec[3](0, l, l))
+    out
+  }
 
-  def cubePoints(l: Double, n: Int): NArray[Vector3] = {
+  def cubePoints(l: Double, n: Int): NArray[Vec[3]] = {
 
     val basis = corners(l)
 
@@ -28,18 +35,18 @@ object Cube {
     val pointCount: Int = cubeInPlace(n) - cubeInPlace(capStride)
     val sidePointCount = pointCount - (2 * capPointCount) // points.length - (2 * capPointCount)
 
-    val points: NArray[Vector3] = new NArray[Vector3](pointCount) // (cubeInPlace(n) - cubeInPlace(n - 2))  // n³ - (n-2)³
+    val points: NArray[Vec[3]] = NArray.ofSize[Vec[3]](pointCount) // (cubeInPlace(n) - cubeInPlace(n - 2))  // n³ - (n-2)³
 
     for (p <- 0 until sidePointCount) {
       val i: Int = (p % stride) / panelStride
 
-      val bottomLeft: Vector3 = basis(0)(i)
-      val bottomRight: Vector3 = basis(0)((i + 1) % 4)
+      val bottomLeft: Vec[3] = basis(0)(i)
+      val bottomRight: Vec[3] = basis(0)((i + 1) % 4)
 
       val z: Double = l * ((p / stride) / panelStride.toDouble)
       val alpha: Double = (p % panelStride) / panelStride.toDouble
 
-      points(p) = Vector3(0.0, 0.0, z) + (bottomLeft * (1.0 - alpha)) + (bottomRight * alpha)
+      points(p) = Vec[3](0.0, 0.0, z) + (bottomLeft * (1.0 - alpha)) + (bottomRight * alpha)
     }
 
     val Δl: Double = l / (n - 1)
@@ -49,8 +56,8 @@ object Cube {
       for (xi <- 1 to capStride) {
         val x: Double = xi * Δl
         val y: Double = yi * Δl
-        points(p) = Vector3(x, y, 0)
-        points(p + capPointCount) = Vector3(x, y, l)
+        points(p) = Vec[3](x, y, 0)
+        points(p + capPointCount) = Vec[3](x, y, l)
         p += 1
       }
     }
@@ -66,7 +73,7 @@ object Cube {
 
     if (n < 2) throw IllegalArgumentException("A cube must have at least two points on each line segment.")
 
-    val points: NArray[Vector3] = cubePoints(l, n)
+    val points: NArray[Vec[3]] = cubePoints(l, n)
 
     val panelStride: Int = n - 1
 

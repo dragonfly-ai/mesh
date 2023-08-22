@@ -1,24 +1,28 @@
 package ai.dragonfly.mesh.shape
 
 import narr.*
+import Extensions.given
+import scala.language.implicitConversions
+
 import ai.dragonfly.math.vector.*
+import Vec.*
 import ai.dragonfly.mesh.*
 
 import scala.scalajs.js.annotation.JSExportTopLevel
 object Plane {
 
   @JSExportTopLevel("Plane")
-  def apply(c0: Vector3, c1: Vector3, c2: Vector3, verticalSegments:Int = 1, horizontalSegments:Int = 1): Mesh = {
+  def apply(c0: Vec[3], c1: Vec[3], c2: Vec[3], verticalSegments:Int = 1, horizontalSegments:Int = 1): Mesh = {
 
-    val vX:Vector3 = c1 - c0
-    val vY:Vector3 = c2 - c0
+    val vX:Vec[3] = c1 - c0
+    val vY:Vec[3] = c2 - c0
 
     val width:Int = horizontalSegments + 1
     val height:Int = verticalSegments + 1
 
     val pointCount: Int = width * height
 
-    val points: NArray[Vector3] = new NArray[Vector3](pointCount)
+    val points: NArray[Vec[3]] = NArray.ofSize[Vec[3]](pointCount)
 
     var y:Int = 0
     var x:Int = 0

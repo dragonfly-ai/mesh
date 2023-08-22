@@ -1,8 +1,13 @@
 package ai.dragonfly.mesh.io
 
-import ai.dragonfly.math.vector.Vector3
+import ai.dragonfly.math.vector.*
+import Vec.*
 import ai.dragonfly.mesh.sRGB.*
 import ai.dragonfly.mesh.Mesh
+
+import narr.*
+import Extensions.given
+import scala.language.implicitConversions
 
 import java.io.PrintWriter
 import scala.scalajs.js.annotation.{JSExportAll, JSExportTopLevel}
@@ -16,13 +21,13 @@ object PLY {
 
   val alphaMask:Int = 0xff << 24
 
-  val randomVertexColorMapper: Vector3 => ARGB32 = (v:Vector3) => ARGB32(alphaMask | scala.util.Random.nextInt())
+  val randomVertexColorMapper: Vec[3] => ARGB32 = (v:Vec[3]) => ARGB32(alphaMask | scala.util.Random.nextInt())
 
-  def writeMesh(mesh: Mesh, out: java.io.OutputStream, vertexColorMapper: Vector3 => ARGB32): Unit = {
+  def writeMesh(mesh: Mesh, out: java.io.OutputStream, vertexColorMapper: Vec[3] => ARGB32): Unit = {
     out.write(fromMesh(mesh, vertexColorMapper).getBytes)
   }
 
-  def fromMesh(mesh: Mesh, vertexColorMapper: Vector3 => ARGB32):String = {
+  def fromMesh(mesh: Mesh, vertexColorMapper: Vec[3] => ARGB32):String = {
     val sb: StringBuilder = new StringBuilder()
 
     sb.append(
@@ -41,10 +46,11 @@ end_header
 """
     )
 
-    for (i <- mesh.points.indices) {
-      val v:Vector3 = mesh.points(i)
+    var i:Int = 0; while (i < mesh.points.length) {
+      val v:Vec[3] = mesh.points(i)
       val c: ARGB32 = vertexColorMapper(v)
       sb.append(s"${v.x} ${v.y} ${v.z} ${c.red} ${c.green} ${c.blue} ${c.alpha}\n")
+      i += 1
     }
 
     for (triangle <- mesh.triangles) {
@@ -70,11 +76,12 @@ end_header
 """
     )
 
-    for (i <- mesh.points.indices) {
-      val v: Vector3 = mesh.points(i)
+    var i:Int = 0; while (i < mesh.points.length) {
+      val v: Vec[3] = mesh.points(i)
 //      if (v == null) println(s"$i -> null")
 //      else
       sb.append(s"${v.x} ${v.y} ${v.z}\n")
+      i += 1
     }
 
     for (triangle <- mesh.triangles) {
