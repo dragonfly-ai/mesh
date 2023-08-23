@@ -8,6 +8,7 @@ libraryDependencies += "ai.dragonfly" %%% "mesh" % "<LATEST_VERSION>"
 ```
 
 <h3>Features:</h3>
+
 - Fast, lightweight mesh generation for:
     - Plane
     - Cube
@@ -29,6 +30,7 @@ import ai.dragonfly.math.vector.Vec.*
 import ai.dragonfly.mesh.shape.*
 ```
 <h4>Plane</h4>
+
 ```scala
 // Plane
 Plane(
@@ -40,6 +42,7 @@ Plane(
 )
 ```
 <h4>Cube</h4>
+
 ```scala
 Cube.minimal( 1.0 /* side length */ )  // minimal
 
@@ -52,6 +55,7 @@ Cube(
 )
 ```
 <h4>Cylinder</h4>
+
 ```scala
 Cylinder() // default parameters
 
@@ -65,6 +69,7 @@ Cylinder(
 )
 ```
 <h4>Drum</h4>
+
 ```scala
 Drum() // default parameters
 
@@ -80,6 +85,7 @@ Drum(
 )
 ```
 <h4>Threaded Bolt</h4>
+
 ```scala
 Bolt() // default parameters
 
@@ -95,6 +101,7 @@ Bolt(
 )
 ```
 <h4>Threaded Screw</h4>
+
 ```scala
 Screw() // default parameters
 
@@ -136,6 +143,7 @@ PLY.writeMesh(     // write directly to an output Stream
 
 
 <h3>MTL:</h3>
+
 ```scala
 import ai.dragonfly.mesh.io.MTL
 
@@ -156,6 +164,7 @@ MTL.writeMTL(material, os)      // write directly to an output Stream
 ```
 
 <h3>OBJ:</h3>
+
 ```scala
 import ai.dragonfly.mesh.shape.*
 import ai.dragonfly.mesh.io.OBJ
