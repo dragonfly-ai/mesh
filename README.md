@@ -2,6 +2,7 @@
 &nbsp;&nbsp;&nbsp;A cross compiled Scala 3 library that provides accessible functionality to generate, manipulate, and export triangular 3D mesh objects.  Currently supports .PLY, and .OBJ/.MTL file formats.
 
 <h3>sbt</h3>
+
 ```scala
 libraryDependencies += "ai.dragonfly" %%% "mesh" % "<LATEST_VERSION>"
 ```
