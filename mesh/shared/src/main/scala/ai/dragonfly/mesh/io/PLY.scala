@@ -17,7 +17,6 @@
 package ai.dragonfly.mesh.io
 
 import slash.vector.*
-import Vec.*
 import ai.dragonfly.mesh.sRGB.*
 import ai.dragonfly.mesh.Mesh
 
@@ -42,11 +41,13 @@ object PLY {
   }
 
   def fromMesh(mesh: Mesh, vertexColorMapper: Vec[3] => ARGB32):String = {
+    val meshPoints: NArray[Vec[3]] = mesh.points
+
     val sb: StringBuilder = new StringBuilder()
 
     sb.append(
 s"""$defaultHeader
-element vertex ${mesh.points.length}
+element vertex ${meshPoints.length}
 property float x
 property float y
 property float z
@@ -60,8 +61,8 @@ end_header
 """
     )
 
-    var i:Int = 0; while (i < mesh.points.length) {
-      val v:Vec[3] = mesh.points(i)
+    var i:Int = 0; while (i < meshPoints.length) {
+      val v:Vec[3] = meshPoints(i)
       val c: ARGB32 = vertexColorMapper(v)
       sb.append(s"${v.x} ${v.y} ${v.z} ${c.red} ${c.green} ${c.blue} ${c.alpha}\n")
       i += 1
@@ -78,11 +79,13 @@ end_header
 
 
   def fromMesh(mesh: Mesh): String = {
+    val meshPoints: NArray[Vec[3]] = mesh.points
+
     val sb: StringBuilder = new StringBuilder()
 
     sb.append(
       s"""$defaultHeader
-element vertex ${mesh.points.length}
+element vertex ${meshPoints.length}
 property float x
 property float y
 property float z
@@ -92,16 +95,15 @@ end_header
 """
     )
 
-    var i:Int = 0; while (i < mesh.points.length) {
-      val v: Vec[3] = mesh.points(i)
+    var i:Int = 0; while (i < meshPoints.length) {
+      val v: Vec[3] = meshPoints(i)
 //      if (v == null) println(s"$i -> null")
 //      else
       sb.append(s"${v.x} ${v.y} ${v.z}\n")
       i += 1
     }
 
-    var t: Int = 0;
-    while (t < mesh.triangles.length) {
+    var t: Int = 0; while (t < mesh.triangles.length) {
       val triangle = mesh.triangles(t)
       sb.append(s"3 ${triangle.v1} ${triangle.v2} ${triangle.v3}\n")
       t += 1
