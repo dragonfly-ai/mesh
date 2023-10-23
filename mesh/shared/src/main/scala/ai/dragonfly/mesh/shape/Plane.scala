@@ -17,10 +17,9 @@
 package ai.dragonfly.mesh.shape
 
 import narr.*
-import Extensions.given
 import scala.language.implicitConversions
 
-import ai.dragonfly.math.vector.*
+import slash.vector.*
 import Vec.*
 import ai.dragonfly.mesh.*
 

@@ -16,10 +16,6 @@
 
 package ai.dragonfly.mesh.shape
 
-import narr.*
-import ai.dragonfly.math.vector.*
-import ai.dragonfly.math.Constant.π
-import ai.dragonfly.math.{cubeInPlace, squareInPlace}
 import ai.dragonfly.mesh.*
 
 import scala.scalajs.js.annotation.JSExportTopLevel

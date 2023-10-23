@@ -1,5 +1,5 @@
-val appVersion:String = "0.1"
-val globalScalaVersion = "3.3.0"
+val appVersion:String = "0.12"
+val globalScalaVersion = "3.3.1"
 
 ThisBuild / organization := "ai.dragonfly"
 ThisBuild / organizationName := "dragonfly.ai"
@@ -23,7 +23,7 @@ lazy val mesh = crossProject(JSPlatform, JVMPlatform, NativePlatform)
   .settings(
     name := "mesh",
     libraryDependencies ++= Seq(
-      "ai.dragonfly" %%% "slash" % "0.1"
+      "ai.dragonfly" %%% "slash" % "0.2"
     ),
   )
   .jsSettings()

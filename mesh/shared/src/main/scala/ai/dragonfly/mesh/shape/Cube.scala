@@ -17,14 +17,12 @@
 package ai.dragonfly.mesh.shape
 
 import narr.*
-import Extensions.given
 import scala.language.implicitConversions
 
-import ai.dragonfly.math.vector.*
+import slash.vector.*
 import Vec.*
 
-import ai.dragonfly.math.Constant.π
-import ai.dragonfly.math.{cubeInPlace, squareInPlace}
+import slash.{cubeInPlace, squareInPlace}
 import ai.dragonfly.mesh.*
 
 import scala.scalajs.js.annotation.JSExportTopLevel

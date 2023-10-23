@@ -17,11 +17,11 @@
 package ai.dragonfly.mesh.shape
 
 import narr.*
-import Extensions.given
+
 import scala.language.implicitConversions
 
-import ai.dragonfly.math.Constant.π
-import ai.dragonfly.math.vector.*
+import slash.Constant.π
+import slash.vector.*
 import Vec.*
 import ai.dragonfly.mesh.{Mesh, Triangle}
 
@@ -61,7 +61,7 @@ object Screw {
     val lastPointIndex:Int = points.length - 1
 
     var p:Int = 0
-    var dTheta:Double = 2 * π / angularSegments
+    val dTheta:Double = 2 * π / angularSegments
     var theta:Double = 0.0
 
     // generate shank

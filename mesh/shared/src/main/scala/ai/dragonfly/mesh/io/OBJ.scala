@@ -18,12 +18,12 @@ package ai.dragonfly.mesh.io
 
 import narr.*
 
-import ai.dragonfly.math.vector.*
+import slash.vector.*
 import Vec.*
 
 import ai.dragonfly.mesh.*
 
-import java.io.{BufferedReader, InputStream, InputStreamReader, OutputStream}
+import java.io.OutputStream
 import scala.collection.mutable
 import scala.scalajs.js.annotation.{JSExportAll, JSExportTopLevel}
 

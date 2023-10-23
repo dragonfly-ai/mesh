@@ -16,16 +16,14 @@
 
 package ai.dragonfly.mesh.io
 
-import ai.dragonfly.math.vector.*
+import slash.vector.*
 import Vec.*
 import ai.dragonfly.mesh.sRGB.*
 import ai.dragonfly.mesh.Mesh
 
 import narr.*
-import Extensions.given
 import scala.language.implicitConversions
 
-import java.io.PrintWriter
 import scala.scalajs.js.annotation.{JSExportAll, JSExportTopLevel}
 
 @JSExportTopLevel("PLY") @JSExportAll
@@ -69,8 +67,10 @@ end_header
       i += 1
     }
 
-    for (triangle <- mesh.triangles) {
+    var t:Int = 0; while (t < mesh.triangles.length) {
+      val triangle = mesh.triangles(t)
       sb.append(s"3 ${triangle.v1} ${triangle.v2} ${triangle.v3}\n")
+      t += 1
     }
 
     sb.toString()
@@ -100,8 +100,11 @@ end_header
       i += 1
     }
 
-    for (triangle <- mesh.triangles) {
+    var t: Int = 0;
+    while (t < mesh.triangles.length) {
+      val triangle = mesh.triangles(t)
       sb.append(s"3 ${triangle.v1} ${triangle.v2} ${triangle.v3}\n")
+      t += 1
     }
 
     sb.toString()

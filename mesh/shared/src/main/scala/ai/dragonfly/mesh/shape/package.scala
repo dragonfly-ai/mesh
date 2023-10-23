@@ -16,8 +16,7 @@
 
 package ai.dragonfly.mesh
 
-import ai.dragonfly.math.vector.*
-import Vec.*
+import slash.vector.*
 import narr.*
 
 package object shape {

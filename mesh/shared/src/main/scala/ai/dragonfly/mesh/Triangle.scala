@@ -18,7 +18,7 @@ package ai.dragonfly.mesh
 
 import narr.*
 
-import ai.dragonfly.math.vector.*
+import slash.vector.*
 import Vec.*
 
 import scala.scalajs.js.annotation.{JSExportAll, JSExportTopLevel}

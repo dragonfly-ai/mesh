@@ -16,8 +16,6 @@
 
 package ai.dragonfly.mesh
 
-import scala.scalajs.js.annotation.{JSExportAll, JSExportTopLevel}
-
 object sRGB {
 
   opaque type ARGB32 = Int

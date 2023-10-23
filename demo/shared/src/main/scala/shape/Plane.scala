@@ -2,7 +2,7 @@ package shape
 
 import ai.dragonfly.democrossy.Demonstration
 
-import ai.dragonfly.math.vector.*
+import slash.vector.*
 object Plane extends Demonstration {
 
   override def demo():Unit = {
