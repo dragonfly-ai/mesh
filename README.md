@@ -25,8 +25,8 @@ libraryDependencies += "ai.dragonfly" %%% "mesh" % "<LATEST_VERSION>"
 
 ```scala
 // include these imports for all examples
-import ai.dragonfly.math.vector.*
-import ai.dragonfly.math.vector.Vec.*
+import slash.vector.*
+import slash.vector.Vec.*
 import ai.dragonfly.mesh.shape.*
 ```
 <h4>Plane</h4>
