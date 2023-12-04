@@ -77,7 +77,6 @@ end_header
     sb.toString()
   }
 
-
   def fromMesh(mesh: Mesh): String = {
     val meshPoints: NArray[Vec[3]] = mesh.points
 
