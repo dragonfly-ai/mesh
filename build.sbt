@@ -1,4 +1,4 @@
-val appVersion:String = "0.12"
+val appVersion:String = "0.13"
 val globalScalaVersion = "3.3.5"
 
 ThisBuild / organization := "ai.dragonfly"
@@ -10,7 +10,6 @@ ThisBuild / scalaVersion := globalScalaVersion
 
 ThisBuild / tlBaseVersion := appVersion
 ThisBuild / tlCiReleaseBranches := Seq()
-ThisBuild / tlSonatypeUseLegacyHost := false
 
 ThisBuild / nativeConfig ~= {
   _.withLTO(scala.scalanative.build.LTO.thin)
@@ -23,7 +22,7 @@ lazy val mesh = crossProject(JSPlatform, JVMPlatform, NativePlatform)
   .settings(
     name := "mesh",
     libraryDependencies ++= Seq(
-      "ai.dragonfly" %%% "slash" % "0.3.1"
+      "ai.dragonfly" %%% "slash" % "0.3.2"
     ),
   )
   .jsSettings()
