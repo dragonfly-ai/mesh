@@ -30,26 +30,6 @@ lazy val mesh = crossProject(JSPlatform, JVMPlatform, NativePlatform)
     libraryDependencies += "org.scala-js" %% "scalajs-stubs" % "1.1.0"
   )
 
-
-lazy val demo = crossProject(JSPlatform, JVMPlatform, NativePlatform)
-  .crossType(CrossType.Full)
-  .dependsOn(mesh)
-  .settings(
-    name := "demo",
-    Compile / mainClass := Some("Demo"),
-    libraryDependencies ++= Seq(
-      "ai.dragonfly" %%% "democrossy" % "0.102"
-    ),
-    Compile / mainClass := Some("Demo")
-  )
-  .jsSettings(
-    Compile / fastOptJS / artifactPath := file("./docs/js/main.js"),
-    Compile / fullOptJS / artifactPath := file("./docs/js/main.js"),
-    scalaJSUseMainModuleInitializer := true
-  )
-  .jvmSettings()
-
-
 lazy val root = tlCrossRootProject.aggregate(mesh, tests).settings(name := "mesh")
 
 lazy val docs = project.in(file("site")).enablePlugins(TypelevelSitePlugin).settings(
