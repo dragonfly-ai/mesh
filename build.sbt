@@ -63,5 +63,5 @@ lazy val tests = crossProject(
   .dependsOn(mesh)
   .settings(
     name := "mesh-tests",
-    libraryDependencies += "org.scalameta" %%% "munit" % "1.1.0" % Test
+    libraryDependencies += "org.scalameta" %%% "munit" % "1.1.1" % Test
   )
