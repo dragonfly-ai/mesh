@@ -46,7 +46,7 @@ case class Triangle(v1: Int, v2: Int, v3: Int) {
     0.5 * (vertices(v2) - vertices(v1)).cross(vertices(v3) - vertices(v1)).magnitude
   }
 
-  def bounds(vertices: NArray[Vec[3]]): VecBounds[3] = VecBounds[3]( // min: V, MAX: V
+  def bounds(vertices: NArray[Vec[3]]): VectorBounds[3] = VectorBounds[3]( // min: V, MAX: V
     Vec[3](
       Math.min(vertices(v1).x, Math.min(vertices(v2).x, vertices(v3).x)),
       Math.min(vertices(v1).y, Math.min(vertices(v2).y, vertices(v3).y)),
