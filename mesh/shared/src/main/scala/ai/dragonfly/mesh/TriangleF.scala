@@ -18,48 +18,47 @@ package ai.dragonfly.mesh
 
 import narr.*
 
-import slash.vector.*
-import Vec.*
+import slash.vectorf.*
+import slash.vectorf.VecF.*
 
 import scala.scalajs.js.annotation.{JSExportAll, JSExportTopLevel}
 
 
-@JSExportTopLevel("Triangle") @JSExportAll
-object Triangle {
+@JSExportTopLevel("TriangleF") @JSExportAll
+object TriangleF {
 
-  def nonZeroArea(p0:Vec[3], p1:Vec[3], p2:Vec[3]): Boolean = (p1 - p0).cross(p2 - p0).magnitudeSquared > 0
+  def nonZeroArea(p0:VecF[3], p1:VecF[3], p2:VecF[3]): Boolean = (p1 - p0).cross(p2 - p0).magnitudeSquared > 0
 
-  def fromQuad(v1: Int, v2: Int, v3: Int, v4: Int):NArray[Triangle] = {
-    val out:NArray[Triangle] = new NArray[Triangle](2)
-    out(0) = Triangle(v1, v2, v3)
-    out(1) = Triangle(v1, v3, v4)
+  def fromQuad(v1: Int, v2: Int, v3: Int, v4: Int):NArray[TriangleF] = {
+    val out:NArray[TriangleF] = new NArray[TriangleF](2)
+    out(0) = TriangleF(v1, v2, v3)
+    out(1) = TriangleF(v1, v3, v4)
     out
   }
 }
 
 @JSExportAll
-case class Triangle(v1: Int, v2: Int, v3: Int) {
+case class TriangleF(v1: Int, v2: Int, v3: Int) {
+  def offset(delta: Int): TriangleF = TriangleF(v1 + delta, v2 + delta, v3 + delta)
 
-  def offset(delta: Int): Triangle = Triangle(v1 + delta, v2 + delta, v3 + delta)
+  def nonZeroArea(points: NArray[VecF[3]]):Boolean = TriangleF.nonZeroArea(points(v1), points(v2), points(v3))
 
-  def nonZeroArea(points: NArray[Vec[3]]):Boolean = Triangle.nonZeroArea(points(v1), points(v2), points(v3))
-
-  def area(vertices: NArray[Vec[3]]): Double = {
+  def area(vertices: NArray[VecF[3]]): Double = {
     0.5 * (vertices(v2) - vertices(v1)).cross(vertices(v3) - vertices(v1)).magnitude
   }
 
-  def bounds(vertices: NArray[Vec[3]]): VectorBounds[3] = VectorBounds[3]( // min: V, MAX: V
-    Vec[3](
+  def boundsF(vertices: NArray[VecF[3]]): VectorFBounds[3] = VectorFBounds[3]( // min: V, MAX: V
+    VecF[3](
       Math.min(vertices(v1).x, Math.min(vertices(v2).x, vertices(v3).x)),
       Math.min(vertices(v1).y, Math.min(vertices(v2).y, vertices(v3).y)),
       Math.min(vertices(v1).z, Math.min(vertices(v2).z, vertices(v3).z))
     ),
-    Vec[3](
+    VecF[3](
       Math.max(vertices(v1).x, Math.max(vertices(v2).x, vertices(v3).x)),
       Math.max(vertices(v1).y, Math.max(vertices(v2).y, vertices(v3).y)),
       Math.max(vertices(v1).z, Math.max(vertices(v2).z, vertices(v3).z))
     )
   )
-
-  override def toString: String = s"Triangle($v1, $v2, $v3)"
+ 
+  override def toString: String = s"TriangleF($v1, $v2, $v3)"
 }

@@ -17,27 +17,26 @@
 package ai.dragonfly.mesh
 
 import narr.*
-
-import slash.vector.*
-import Vec.*
+import slash.vectorf.*
+import slash.vectorf.VecF.*
 
 import scala.collection.mutable
 import scala.scalajs.js.annotation.*
 
 
-@JSExportTopLevel("Mesh") @JSExportAll
-object Mesh {
+@JSExportTopLevel("MeshF") @JSExportAll
+object MeshF {
 
-  def fromPointsAndHashSet(points:NArray[Vec[3]], triangleSet:mutable.HashSet[Triangle], name:String):Mesh = {
-    val triangles:NArray[Triangle] = new NArray[Triangle](triangleSet.size)
+  def fromPointsAndHashSet(points:NArray[VecF[3]], triangleSet:mutable.HashSet[TriangleF], name:String):MeshF = {
+    val triangles:NArray[TriangleF] = new NArray[TriangleF](triangleSet.size)
     var i:Int = 0
     for (t <- triangleSet) {
       triangles(i) = t
       i += 1
     }
-    new Mesh(points, triangles, name)
+    new MeshF(points, triangles, name)
   }
-  def combine(name: String, meshes: Mesh*): Mesh = {
+  def combine(name: String, meshes: MeshF*): MeshF = {
     var pointCount = 0
     var polygonCount = 0
 
@@ -46,8 +45,8 @@ object Mesh {
       polygonCount = polygonCount + m.triangles.length
     }
 
-    val points: NArray[Vec[3]] = NArray.ofSize[Vec[3]](pointCount)
-    val triangles: NArray[Triangle] = new NArray[Triangle](polygonCount)
+    val points: NArray[VecF[3]] = NArray.ofSize[VecF[3]](pointCount)
+    val triangles: NArray[TriangleF] = new NArray[TriangleF](polygonCount)
 
     var pi: Int = 0
     var tj = 0
@@ -69,21 +68,21 @@ object Mesh {
       pi = pi + m.points.length
     }
 
-    new Mesh(points, triangles, name)
+    new MeshF(points, triangles, name)
   }
 }
 
 @JSExportAll
-class Mesh(val points: NArray[Vec[3]], val triangles: NArray[Triangle], val name:String = "Untitled Mesh") {
+class MeshF(val points: NArray[VecF[3]], val triangles: NArray[TriangleF], val name:String = "Untitled MeshF") {
 
-  def scale(scalar: Double): Unit = {
+  def scale(scalar: Float): Unit = {
     var p:Int = 0; while (p < points.length) {
       points(p).scale(scalar)
       p += 1
     }
   }
 
-  def translate(offset:Vec[3]): Unit = {
+  def translate(offset:VecF[3]): Unit = {
     var p: Int = 0
     while (p < points.length) {
       points(p).add(offset)
@@ -91,20 +90,20 @@ class Mesh(val points: NArray[Vec[3]], val triangles: NArray[Triangle], val name
     }
   }
 
-  def transform(f: Vec[3] => Vec[3]):Mesh = new Mesh(
-    NArray.tabulate[Vec[3]](points.length)((i:Int) => f(points(i))),
+  def transform(f: VecF[3] => VecF[3]):MeshF = new MeshF(
+    NArray.tabulate[VecF[3]](points.length)((i:Int) => f(points(i))),
     triangles
   )
 
-  def copy(copyName:String = this.name):Mesh = new Mesh(
-    NArray.tabulate[Vec[3]](points.length)((i:Int) => points(i)),
-    NArray.tabulate[Triangle](triangles.length)((i:Int) => triangles(i)),
+  def copy(copyName:String = this.name):MeshF = new MeshF(
+    NArray.tabulate[VecF[3]](points.length)((i:Int) => points(i)),
+    NArray.tabulate[TriangleF](triangles.length)((i:Int) => triangles(i)),
     copyName
   )
 
   override def toString: String = {
     val sb:StringBuilder = new StringBuilder()
-    sb.append("Mesh Data {\n")
+    sb.append("MeshF Data {\n")
     sb.append("\tPoints {\n")
     var i:Int = 0; while (i < points.length) {
       sb.append("\t\t").append(i).append(" : ").append(points(i)).append("\n")

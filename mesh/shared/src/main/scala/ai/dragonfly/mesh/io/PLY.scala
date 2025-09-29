@@ -17,8 +17,9 @@
 package ai.dragonfly.mesh.io
 
 import slash.vector.*
+import slash.vectorf.*
 import ai.dragonfly.mesh.sRGB.*
-import ai.dragonfly.mesh.Mesh
+import ai.dragonfly.mesh.*
 
 import narr.*
 import scala.language.implicitConversions
@@ -36,8 +37,14 @@ object PLY {
 
   val randomVertexColorMapper: Vec[3] => ARGB32 = (v:Vec[3]) => ARGB32(alphaMask | scala.util.Random.nextInt())
 
+  val randomVertexFColorMapper: VecF[3] => ARGB32 = (v:VecF[3]) => ARGB32(alphaMask | scala.util.Random.nextInt())
+
   def writeMesh(mesh: Mesh, out: java.io.OutputStream, vertexColorMapper: Vec[3] => ARGB32): Unit = {
     out.write(fromMesh(mesh, vertexColorMapper).getBytes)
+  }
+
+  def writeMeshF(mesh: MeshF, out: java.io.OutputStream, vertexColorMapper: VecF[3] => ARGB32): Unit = {
+    out.write(fromMeshF(mesh, vertexColorMapper).getBytes)
   }
 
   def fromMesh(mesh: Mesh, vertexColorMapper: Vec[3] => ARGB32):String = {
@@ -63,6 +70,43 @@ end_header
 
     var i:Int = 0; while (i < meshPoints.length) {
       val v:Vec[3] = meshPoints(i)
+      val c: ARGB32 = vertexColorMapper(v)
+      sb.append(s"${v.x} ${v.y} ${v.z} ${c.red} ${c.green} ${c.blue} ${c.alpha}\n")
+      i += 1
+    }
+
+    var t:Int = 0; while (t < mesh.triangles.length) {
+      val triangle = mesh.triangles(t)
+      sb.append(s"3 ${triangle.v1} ${triangle.v2} ${triangle.v3}\n")
+      t += 1
+    }
+
+    sb.toString()
+  }
+
+  def fromMeshF(mesh: MeshF, vertexColorMapper: VecF[3] => ARGB32):String = {
+    val meshPoints: NArray[VecF[3]] = mesh.points
+
+    val sb: StringBuilder = new StringBuilder()
+
+    sb.append(
+      s"""$defaultHeader
+element vertex ${meshPoints.length}
+property float x
+property float y
+property float z
+property uchar red
+property uchar green
+property uchar blue
+property uchar alpha
+element face ${mesh.triangles.length}
+property list uchar uint vertex_indices
+end_header
+"""
+    )
+
+    var i:Int = 0; while (i < meshPoints.length) {
+      val v:VecF[3] = meshPoints(i)
       val c: ARGB32 = vertexColorMapper(v)
       sb.append(s"${v.x} ${v.y} ${v.z} ${c.red} ${c.green} ${c.blue} ${c.alpha}\n")
       i += 1
@@ -111,5 +155,38 @@ end_header
     sb.toString()
   }
 
+  def fromMeshF(mesh: MeshF): String = {
+    val meshPoints: NArray[VecF[3]] = mesh.points
+
+    val sb: StringBuilder = new StringBuilder()
+
+    sb.append(
+      s"""$defaultHeader
+element vertex ${meshPoints.length}
+property float x
+property float y
+property float z
+element face ${mesh.triangles.length}
+property list uchar uint vertex_indices
+end_header
+"""
+    )
+
+    var i:Int = 0; while (i < meshPoints.length) {
+      val v: VecF[3] = meshPoints(i)
+      //      if (v == null) println(s"$i -> null")
+      //      else
+      sb.append(s"${v.x} ${v.y} ${v.z}\n")
+      i += 1
+    }
+
+    var t: Int = 0; while (t < mesh.triangles.length) {
+      val triangle = mesh.triangles(t)
+      sb.append(s"3 ${triangle.v1} ${triangle.v2} ${triangle.v3}\n")
+      t += 1
+    }
+
+    sb.toString()
+  }
 
 }

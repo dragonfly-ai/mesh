@@ -24,6 +24,7 @@ import Vec.*
 import ai.dragonfly.mesh.*
 
 import scala.scalajs.js.annotation.JSExportTopLevel
+
 object Plane {
 
   /**
