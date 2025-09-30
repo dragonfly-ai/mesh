@@ -17,7 +17,6 @@
 package ai.dragonfly.mesh
 
 import narr.*
-
 import slash.vector.*
 import Vec.*
 
@@ -100,6 +99,12 @@ class Mesh(val points: NArray[Vec[3]], val triangles: NArray[Triangle], val name
     NArray.tabulate[Vec[3]](points.length)((i:Int) => points(i)),
     NArray.tabulate[Triangle](triangles.length)((i:Int) => triangles(i)),
     copyName
+  )
+
+  def toMeshF:MeshF = MeshF(
+    NArray.tabulate[slash.vectorf.VecF[3]](points.length)(i => points(i).toVecF),
+    NArray.tabulate[TriangleF](triangles.length)(i => triangles(i).toTriangleF),
+    name
   )
 
   override def toString: String = {

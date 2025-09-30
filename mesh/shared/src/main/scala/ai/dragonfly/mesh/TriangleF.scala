@@ -59,6 +59,8 @@ case class TriangleF(v1: Int, v2: Int, v3: Int) {
       Math.max(vertices(v1).z, Math.max(vertices(v2).z, vertices(v3).z))
     )
   )
- 
+
+  def toTriangle: Triangle = Triangle(v1, v2, v3)
+
   override def toString: String = s"TriangleF($v1, $v2, $v3)"
 }

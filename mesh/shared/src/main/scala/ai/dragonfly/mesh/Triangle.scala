@@ -61,5 +61,7 @@ case class Triangle(v1: Int, v2: Int, v3: Int) {
     )
   )
 
+  def toTriangleF: TriangleF = TriangleF(v1, v2, v3)
+
   override def toString: String = s"Triangle($v1, $v2, $v3)"
 }

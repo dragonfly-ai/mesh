@@ -101,6 +101,12 @@ class MeshF(val points: NArray[VecF[3]], val triangles: NArray[TriangleF], val n
     copyName
   )
 
+  def toMesh: Mesh = Mesh(
+    NArray.tabulate[slash.vector.Vec[3]](points.length)(i => points(i).toVec),
+    NArray.tabulate[Triangle](triangles.length)(i => triangles(i).toTriangle),
+    name
+  )
+
   override def toString: String = {
     val sb:StringBuilder = new StringBuilder()
     sb.append("MeshF Data {\n")
