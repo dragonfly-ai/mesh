@@ -21,7 +21,7 @@ import scala.language.implicitConversions
 
 import slash.Constant.π
 import slash.vector.*
-import Vec.*
+
 import ai.dragonfly.mesh.{Mesh, Triangle}
 
 import scala.scalajs.js.annotation.JSExportTopLevel

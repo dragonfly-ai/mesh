@@ -35,9 +35,9 @@ object PLY {
 
   val alphaMask:Int = 0xff << 24
 
-  val randomVertexColorMapper: Vec[3] => ARGB32 = (v:Vec[3]) => ARGB32(alphaMask | scala.util.Random.nextInt())
+  val randomVertexColorMapper: Vec[3] => ARGB32 = (_:Vec[3]) => ARGB32(alphaMask | scala.util.Random.nextInt())
 
-  val randomVertexFColorMapper: VecF[3] => ARGB32 = (v:VecF[3]) => ARGB32(alphaMask | scala.util.Random.nextInt())
+  val randomVertexFColorMapper: VecF[3] => ARGB32 = (_:VecF[3]) => ARGB32(alphaMask | scala.util.Random.nextInt())
 
   def writeMesh(mesh: Mesh, out: java.io.OutputStream, vertexColorMapper: Vec[3] => ARGB32): Unit = {
     out.write(fromMesh(mesh, vertexColorMapper).getBytes)

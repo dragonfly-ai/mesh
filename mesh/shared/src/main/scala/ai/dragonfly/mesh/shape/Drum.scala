@@ -22,7 +22,6 @@ import scala.language.implicitConversions
 import slash.Constant.π
 
 import slash.vector.*
-import Vec.*
 
 import ai.dragonfly.mesh.*
 
@@ -40,7 +39,7 @@ object Drum {
     if (sideSegments < 1 || baseSegments < 1 || capSegments < 1) throw new IllegalArgumentException("Drum doesn't support 0 segment values.")
     if (height < 0.0 || baseRadius < 0.0 || capRadius < 0.0) throw new IllegalArgumentException("Drum doesn't support negative dimension values.")
 
-    val Δθ: Double = (2 * π) / angularSegments
+    val dTheta: Double = (2 * π) / angularSegments
     val cuts: Int = 2 + baseSegments + sideSegments + capSegments - 3
 
     val points: NArray[Vec[3]] = NArray.ofSize[Vec[3]](2 + (cuts * angularSegments))
@@ -53,7 +52,7 @@ object Drum {
 
     var dT = 0.0
     var p = 1
-    var pcount = 2;
+    //var pcount = 2;
 
     var cut:Int = 0; while (cut < cuts) {
 
@@ -91,11 +90,11 @@ object Drum {
         val cutOffset: Int = (cut - 1) * angularSegments
         points(cutOffset + p) = Vec[3](x, y, h)
 
-        dT = p * Δθ
+        dT = p * dTheta
         p = p + 1
 
       }
-      pcount += p - 1
+      //pcount += p - 1
 
     }
 
