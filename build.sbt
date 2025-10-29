@@ -22,7 +22,7 @@ lazy val mesh = crossProject(JSPlatform, JVMPlatform, NativePlatform)
   .settings(
     name := "mesh",
     libraryDependencies ++= Seq(
-      "ai.dragonfly" %%% "slash" % "0.4.1"
+      "ai.dragonfly" %%% "slash" % "0.4.2"
     ),
   )
   .jsSettings()
